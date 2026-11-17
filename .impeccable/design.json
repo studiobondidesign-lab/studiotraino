@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-17T03:11:49.638014Z",
+  "title": "Design System: StudioTraino",
+  "extensions": {
+    "colorMeta": {
+      "laranja-carga": {
+        "role": "primary",
+        "displayName": "Laranja Carga",
+        "canonical": "oklch(76% 0.18 62)",
+        "tonalRamp": [
+          "oklch(15% 0.06 62)",
+          "oklch(25% 0.09 62)",
+          "oklch(35% 0.12 62)",
+          "oklch(48% 0.159 62)",
+          "oklch(60% 0.165 62)",
+          "oklch(72% 0.129 62)",
+          "oklch(85% 0.09 62)",
+          "oklch(95% 0.06 62)"
+        ]
+      },
+      "laranja-texto": {
+        "role": "primary",
+        "displayName": "Laranja Texto",
+        "canonical": "oklch(58% 0.15 52)",
+        "tonalRamp": [
+          "oklch(15% 0.05 52)",
+          "oklch(25% 0.075 52)",
+          "oklch(35% 0.1 52)",
+          "oklch(48% 0.132 52)",
+          "oklch(60% 0.137 52)",
+          "oklch(72% 0.107 52)",
+          "oklch(85% 0.075 52)",
+          "oklch(95% 0.05 52)"
+        ]
+      },
+      "verde-feito": {
+        "role": "secondary",
+        "displayName": "Verde Feito",
+        "canonical": "oklch(73% 0.19 148)",
+        "tonalRamp": [
+          "oklch(15% 0.063 148)",
+          "oklch(25% 0.095 148)",
+          "oklch(35% 0.127 148)",
+          "oklch(48% 0.168 148)",
+          "oklch(60% 0.174 148)",
+          "oklch(72% 0.136 148)",
+          "oklch(85% 0.095 148)",
+          "oklch(95% 0.063 148)"
+        ]
+      },
+      "vermelho-descartar": {
+        "role": "tertiary",
+        "displayName": "Vermelho Descartar",
+        "canonical": "oklch(63% 0.24 28)",
+        "tonalRamp": [
+          "oklch(15% 0.08 28)",
+          "oklch(25% 0.12 28)",
+          "oklch(35% 0.16 28)",
+          "oklch(48% 0.212 28)",
+          "oklch(60% 0.22 28)",
+          "oklch(72% 0.172 28)",
+          "oklch(85% 0.12 28)",
+          "oklch(95% 0.08 28)"
+        ]
+      },
+      "fundo-cinza-ios": {
+        "role": "neutral",
+        "displayName": "Fundo Cinza iOS",
+        "canonical": "oklch(96.5% 0.004 286)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(25% 0.005 286)",
+          "oklch(35% 0.007 286)",
+          "oklch(48% 0.009 286)",
+          "oklch(60% 0.009 286)",
+          "oklch(72% 0.007 286)",
+          "oklch(85% 0.005 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      },
+      "superficie-grafite": {
+        "role": "neutral",
+        "displayName": "Superfície Grafite",
+        "canonical": "oklch(22% 0.003 286)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(25% 0.005 286)",
+          "oklch(35% 0.007 286)",
+          "oklch(48% 0.009 286)",
+          "oklch(60% 0.009 286)",
+          "oklch(72% 0.007 286)",
+          "oklch(85% 0.005 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      },
+      "texto-secundario": {
+        "role": "neutral",
+        "displayName": "Texto Secundário",
+        "canonical": "oklch(54% 0.008 286)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(25% 0.005 286)",
+          "oklch(35% 0.007 286)",
+          "oklch(48% 0.009 286)",
+          "oklch(60% 0.009 286)",
+          "oklch(72% 0.007 286)",
+          "oklch(85% 0.005 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Título grande",
+        "purpose": "Título da tela, some ao rolar."
+      },
+      "headline": {
+        "displayName": "Título de cartão",
+        "purpose": "Nome do treino e título das folhas."
+      },
+      "body": {
+        "displayName": "Corpo",
+        "purpose": "Texto, campos e listas."
+      },
+      "label": {
+        "displayName": "Rótulo",
+        "purpose": "Rótulos de seção em maiúsculas."
+      },
+      "numero-timer": {
+        "displayName": "Número do timer",
+        "purpose": "Timer de descanso."
+      },
+      "numero-serie": {
+        "displayName": "Número da série",
+        "purpose": "Carga e repetições nos steppers."
+      },
+      "secondary": {
+        "displayName": "Secundário",
+        "purpose": "Metadados e textos de apoio (14–15px)."
+      },
+      "caption": {
+        "displayName": "Legenda",
+        "purpose": "Indicador de sincronização e legendas."
+      },
+      "tab-label": {
+        "displayName": "Rótulo da aba",
+        "purpose": "Barra de abas e cabeçalho das séries."
+      }
+    },
+    "shadows": [
+      {
+        "name": "flutuante",
+        "value": "0 12px 32px rgba(0,0,0,.28), inset 0 .5px 0 rgba(255,255,255,.14)",
+        "purpose": "Pílula do timer de descanso."
+      },
+      {
+        "name": "folha",
+        "value": "0 -10px 40px rgba(0,0,0,.2)",
+        "purpose": "Folhas que sobem de baixo."
+      },
+      {
+        "name": "interruptor",
+        "value": "0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.16)",
+        "purpose": "Bolinha do interruptor."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.23,1,.32,1)",
+        "purpose": "Toques, selos, progresso e transições de estado (160–300ms)."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(.32,.72,0,1)",
+        "purpose": "Folhas e timer entrando e saindo (420ms)."
+      },
+      {
+        "name": "hold",
+        "value": "900ms linear",
+        "purpose": "Preenchimento do segurar para confirmar."
+      }
+    ],
+    "materials": [
+      {
+        "name": "material-barra",
+        "value": "blur(20px) saturate(180%) sobre rgba(246,246,248,.78) / rgba(22,22,24,.74)",
+        "purpose": "Barras de cima e de abas."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compacto",
+        "value": "380px"
+      },
+      {
+        "name": "coluna",
+        "value": "560px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal da tela: Iniciar, Salvar, Concluir.",
+      "html": "<button class=\"ds-btn-primary\">Iniciar</button>",
+      "css": ".ds-btn-primary{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;min-height:50px;padding:0 20px;border:0;border-radius:14px;background:#ff9500;color:#1f1200;font-size:17px;font-weight:600;letter-spacing:-.01em;cursor:pointer;transition:transform 160ms cubic-bezier(.23,1,.32,1)}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid #ff9500;outline-offset:2px}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação de apoio ao lado da principal: Editar, Cancelar.",
+      "html": "<button class=\"ds-btn-secondary\">Editar</button>",
+      "css": ".ds-btn-secondary{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;min-height:50px;padding:0 20px;border:0;border-radius:14px;background:rgba(118,118,128,.12);color:#000;font-size:17px;font-weight:600;cursor:pointer;transition:transform 160ms cubic-bezier(.23,1,.32,1)}.ds-btn-secondary:active{transform:scale(.97)}.ds-btn-secondary:focus-visible{outline:2px solid #ff9500;outline-offset:2px}"
+    },
+    {
+      "name": "Segurar para confirmar",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação destrutiva: o vermelho preenche enquanto o dedo segura.",
+      "html": "<button class=\"ds-hold\"><span>Segure para descartar</span><span class=\"ds-hold-fill\">Segure para descartar</span></button>",
+      "css": ".ds-hold{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;position:relative;overflow:hidden;min-height:50px;padding:0 20px;border:0;border-radius:14px;background:rgba(118,118,128,.12);color:#d70015;font-size:17px;font-weight:600;cursor:pointer}.ds-hold-fill{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#ff3b30;color:#fff;clip-path:inset(0 100% 0 0);transition:clip-path 200ms cubic-bezier(.23,1,.32,1)}.ds-hold:active .ds-hold-fill{clip-path:inset(0 0 0 0);transition:clip-path 900ms linear}.ds-hold:focus-visible{outline:2px solid #ff9500;outline-offset:2px}"
+    },
+    {
+      "name": "Linha de série",
+      "kind": "custom",
+      "refersTo": "stepper",
+      "description": "Número, carga, repetições e check de uma série no treino ativo.",
+      "html": "<div class=\"ds-set\"><span class=\"ds-idx\">1</span><div class=\"ds-step\"><button aria-label=\"Menos\">−</button><input value=\"62,5\" aria-label=\"Carga\"><button aria-label=\"Mais\">+</button></div><div class=\"ds-step\"><button aria-label=\"Menos\">−</button><input value=\"10\" aria-label=\"Repetições\"><button aria-label=\"Mais\">+</button></div><button class=\"ds-check\" aria-pressed=\"true\" aria-label=\"Feita\"><svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\"><path d=\"M5 12.5l4.5 4.5L19 7.5\" stroke=\"currentColor\" stroke-width=\"2.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"/></svg></button></div>",
+      "css": ".ds-set{display:grid;grid-template-columns:20px 1.3fr 1fr 50px;gap:6px;align-items:center;width:340px}.ds-idx{font-family:ui-rounded,\"SF Pro Rounded\",-apple-system,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:17px;font-weight:700;color:#248a3d;text-align:center}.ds-step{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;height:50px;border-radius:12px;background:rgba(52,199,89,.14)}.ds-step button{border:0;background:none;font-size:22px;color:#6c6c72;border-radius:12px;cursor:pointer}.ds-step button:active{transform:scale(.9)}.ds-step input{font-family:ui-rounded,\"SF Pro Rounded\",-apple-system,system-ui,sans-serif;font-variant-numeric:tabular-nums;width:100%;min-width:0;border:0;background:transparent;text-align:center;font-size:20px;font-weight:600;outline:none}.ds-step input:focus{box-shadow:inset 0 0 0 2px #ff9500;border-radius:8px}.ds-check{height:50px;border:0;border-radius:12px;background:#34c759;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}.ds-check:focus-visible{outline:2px solid #ff9500;outline-offset:2px}"
+    },
+    {
+      "name": "Timer de descanso",
+      "kind": "custom",
+      "refersTo": "rest-timer",
+      "description": "Pílula flutuante do descanso, acima da barra de abas.",
+      "html": "<div class=\"ds-rest\"><span class=\"ds-rt\">1:24</span><span class=\"ds-rl\">Descanso<b>Próximo: Supino inclinado</b></span><button>−15</button><button>+15</button><i class=\"ds-bar\"></i></div>",
+      "css": ".ds-rest{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;width:360px;padding:10px 10px 12px 18px;border-radius:22px;background:rgba(30,30,32,.9);color:#fff;box-shadow:0 12px 32px rgba(0,0,0,.28),inset 0 .5px 0 rgba(255,255,255,.14)}.ds-rt{font-family:ui-rounded,\"SF Pro Rounded\",-apple-system,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:38px;font-weight:700;line-height:1;min-width:86px;letter-spacing:-.02em}.ds-rl{flex:1;min-width:0;font-size:12px;opacity:.7}.ds-rl b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-rest button{min-width:46px;height:46px;border:0;border-radius:14px;background:rgba(255,255,255,.14);color:inherit;font-weight:600;font-size:15px;cursor:pointer}.ds-rest button:active{transform:scale(.94)}.ds-bar{position:absolute;left:0;bottom:0;height:3px;width:58%;background:#ff9500}"
+    },
+    {
+      "name": "Cartão de treino",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Treino salvo na lista, com ações de iniciar e editar.",
+      "html": "<div class=\"ds-card\"><h3>Treino A · Peito, ombro e tríceps</h3><p>5 exercícios · 16 séries · há 3 dias</p><div class=\"ds-actions\"><button class=\"ds-p\">Iniciar</button><button class=\"ds-s\">Editar</button></div></div>",
+      "css": ".ds-card{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;width:340px;background:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}.ds-card h3{margin:0;font-size:20px;font-weight:600;letter-spacing:-.02em}.ds-card p{margin:0;font-size:14px;color:#6c6c72}.ds-actions{display:grid;grid-template-columns:1fr auto;gap:8px}.ds-actions button{min-height:50px;padding:0 20px;border:0;border-radius:14px;font-size:17px;font-weight:600;cursor:pointer}.ds-p{background:#ff9500;color:#1f1200}.ds-s{background:rgba(118,118,128,.12);color:#000}.ds-actions button:active{transform:scale(.97)}"
+    },
+    {
+      "name": "Chips de filtro",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Filtro de grupo muscular na aba Exercícios.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Peito</button><button class=\"ds-chip\">Costas</button><button class=\"ds-chip\">Pernas</button></div>",
+      "css": ".ds-chips{display:flex;gap:8px}.ds-chip{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;border:0;border-radius:999px;padding:7px 14px;font-size:15px;font-weight:500;background:rgba(118,118,128,.12);color:#000;cursor:pointer;transition:transform 160ms cubic-bezier(.23,1,.32,1)}.ds-chip:active{transform:scale(.96)}.ds-chip[aria-pressed=true]{background:#000;color:#f2f2f7}.ds-chip:focus-visible{outline:2px solid #ff9500;outline-offset:2px}"
+    },
+    {
+      "name": "Barra de abas",
+      "kind": "nav",
+      "refersTo": "",
+      "description": "Navegação fixa embaixo, translúcida.",
+      "html": "<nav class=\"ds-tabs\"><button aria-current=\"page\">Treinos</button><button>Agora<i></i></button><button>Exercícios</button><button>Histórico</button></nav>",
+      "css": ".ds-tabs{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;width:360px;background:rgba(246,246,248,.78);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 -.5px 0 rgba(0,0,0,.12)}.ds-tabs button{height:56px;border:0;background:none;font-size:11px;font-weight:500;color:#6c6c72;cursor:pointer}.ds-tabs button[aria-current=page]{color:#c25e00}.ds-tabs i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#ff9500;margin-left:3px;vertical-align:2px}.ds-tabs button:active{transform:scale(.94)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Ferramenta de Bolso",
+    "overview": "O StudioTraino é um instrumento, não uma vitrine. Ele se comporta como um app que já veio no iPhone: preciso, sóbrio e previsível, com títulos grandes, cartões agrupados, materiais translúcidos e folhas que sobem de baixo. A pessoa não precisa aprender nada novo. Tudo é cinza do sistema, e o laranja aparece só onde importa: a próxima ação, a carga e o progresso. Os números são o centro da tela, grandes, arredondados e sem pular.\n\nA precisão vem do uso real. A ferramenta é usada em pé entre as séries, com uma mão, cansado e às vezes com a mão suada, então os controles do treino têm 50px de altura e cada leitura precisa funcionar de relance. Uma boa ferramenta não chama atenção para si mesma: ela some quando não está sendo usada e responde na hora quando é tocada.\n\nA densidade é baixa no treino ativo e média nas listas. Cada série é uma linha de controles com 50px de altura. A tela de treino ativo mostra só o que importa agora: o exercício, a última vez que ele foi feito e as séries. O timer de descanso flutua por cima de tudo, sem nunca trocar de tela.\n\nO movimento é físico e curto: um toque responde na hora, com escala para 0,97, as folhas sobem com a curva de gaveta e o que entra sai pelo mesmo caminho. Tudo respeita a preferência de movimento reduzido, transparência reduzida e alto contraste.",
+    "keyCharacteristics": [
+      "Idioma do iOS: títulos grandes que passam para a barra translúcida ao rolar, cartões agrupados e barra de abas translúcida.",
+      "Um laranja só, para a ação principal, a carga e o progresso. O verde quer dizer \"feito\" e nada mais.",
+      "Números arredondados com algarismos de largura fixa em tudo que é carga, repetição ou tempo.",
+      "Alvos de toque de 50px no treino ativo, porque a mão está cansada.",
+      "Tema claro e escuro completos. O escuro é preto puro, para a academia e para OLED."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Laranja Único",
+        "body": "O laranja marca a próxima ação ou a carga, e só uma coisa laranja grita por tela. Botões secundários são cinza.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Verde Merecido",
+        "body": "O verde só aparece depois que a pessoa fez alguma coisa. Nunca é usado como decoração ou para \"sucesso\" genérico.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Número Redondo",
+        "body": "Todo número que a pessoa lê durante o treino (carga, repetições, tempo, volume) usa a fonte arredondada com algarismos de largura fixa. Texto nunca usa essa fonte.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Plano em Repouso",
+        "body": "Cartão não tem sombra. Sombra quer dizer \"isto está flutuando por cima e vai embora\".",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "manter os alvos de toque do treino ativo com 50px de altura ou mais.",
+      "usar a fonte arredondada com algarismos de largura fixa em todo número de treino.",
+      "usar Tinta do Laranja (#1f1200) sobre o laranja, nunca branco.",
+      "fazer o que entra sair pelo mesmo caminho, com a curva de gaveta (cubic-bezier(.32,.72,0,1)) nas folhas e no timer.",
+      "proteger toda ação destrutiva com o botão de segurar para confirmar.",
+      "desenhar cada tela nos temas claro e escuro, e testar com movimento reduzido."
+    ],
+    "donts": [
+      "colocar sombra em cartões que estão parados.",
+      "usar o verde para nada que a pessoa ainda não fez.",
+      "ter dois elementos laranja chamando atenção na mesma tela.",
+      "abrir uma tela nova no meio do treino para algo que cabe numa folha.",
+      "usar caixa de diálogo de confirmar ou cancelar para apagar coisas. Use segurar para confirmar."
+    ]
+  }
+}
