@@ -162,7 +162,7 @@ button.sync.login .person{display:block}
 .livehead h1{margin:2px 0 0}
 .eyebrow{font-size:13px;font-weight:600;color:var(--accent-text);letter-spacing:0}
 .clock{font-family:var(--f-num);font-size:34px;font-weight:700;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.progress{height:6px;background:var(--fill);border-radius:99px;overflow:hidden;margin:14px 0 2px}
+.progress{height:6px;background:var(--fill);border-radius:999px;overflow:hidden;margin:14px 0 2px}
 .progress i{display:block;height:100%;width:100%;background:var(--accent);border-radius:99px;transform-origin:left center;transition:transform 300ms var(--ease-out)}
 .exlive{padding:16px 12px 12px;scroll-margin-top:calc(64px + env(safe-area-inset-top,0px));transition:box-shadow 240ms ease}
 .exlive.complete{box-shadow:inset 0 0 0 2px var(--done)}
@@ -219,7 +219,7 @@ button.sync.login .person{display:block}
 .toast.lift{bottom:calc(196px + env(safe-area-inset-bottom,0px))}
 .toast span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toast:not(:has(button)){padding-right:16px}
-.toast button{flex:none;min-height:36px;padding:0 12px;border-radius:11px;font-weight:600;color:var(--accent);background:rgba(255,255,255,.1)}
+.toast button{flex:none;min-height:36px;padding:0 12px;border-radius:12px;font-weight:600;color:var(--accent);background:rgba(255,255,255,.1)}
 .toast span:only-child{padding-right:10px}
 /* finish recap */
 .recap{text-align:left}
@@ -239,7 +239,7 @@ button.sync.login .person{display:block}
   .set .step{grid-column:1;grid-template-columns:28px minmax(0,1fr) 28px}
   .set .step button{font-size:18px}
   .set .check{grid-column:2;grid-row:1/3;height:auto;align-self:stretch}
-  .step[data-u]::after{content:attr(data-u);position:absolute;bottom:3px;left:50%;transform:translateX(-50%);font-size:10px;line-height:1;color:var(--muted);pointer-events:none}
+  .step[data-u]::after{content:attr(data-u);position:absolute;bottom:3px;left:50%;transform:translateX(-50%);font-size:11px;line-height:1;color:var(--muted);pointer-events:none}
   .step input{padding-bottom:8px}
   .exlive .ttl .illo{display:none}
   .restbar .in{padding:8px 8px 10px 14px;gap:8px}
@@ -989,7 +989,7 @@ function vWorkouts(){
       const isLive=active&&active.workoutId===w.id;
       h+=`<div class="card wk"><div><h2>${esc(w.name)}</h2><div class="meta num">${w.id===nextId?'<span class="chip acc">Próximo</span>':""}<span>${w.exercises.length} exercícios</span><span>${totalSets} séries</span><span>${last?"Feito "+ago(last.startedAt):"Ainda não feito"}</span></div></div>
       <p class="ex">${w.exercises.map(e=>esc(e.name)).join(" · ")||"Sem exercícios"}</p>
-      <div class="actions"><button class="btn ${nextId&&w.id!==nextId?"tinted":"primary"}" data-a="start" data-v="${w.id}" ${w.exercises.length&&(!active||isLive)?"":"disabled"}>${isLive?"Continuar":"Iniciar"}</button><button class="btn" data-a="edit" data-v="${w.id}">Editar</button></div></div>`;
+      <div class="actions"><button class="btn ${(active&&!isLive)||(nextId&&w.id!==nextId)?"tinted":"primary"}" data-a="start" data-v="${w.id}" ${w.exercises.length&&(!active||isLive)?"":"disabled"}>${isLive?"Continuar":"Iniciar"}</button><button class="btn" data-a="edit" data-v="${w.id}">Editar</button></div></div>`;
     });
     h+=`<div class="wkfoot"><button class="btn tinted" data-a="new">Novo treino</button><button class="btn tinted" data-a="templates">Modelos</button></div>`;
     if(active)h+=`<p class="sub" style="text-align:center;font-size:13px">Conclua o treino em andamento para iniciar outro.</p>`;
