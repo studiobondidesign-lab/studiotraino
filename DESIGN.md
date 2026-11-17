@@ -4,12 +4,13 @@ description: Ficha de treino de bolso para registrar séries, cargas e descanso 
 colors:
   laranja-carga: "#ff9500"
   laranja-carga-escuro: "#ff9f0a"
-  laranja-texto: "#c25e00"
+  laranja-texto: "#a04c00"
   laranja-texto-escuro: "#ffb340"
   tinta-do-laranja: "#1f1200"
   verde-feito: "#34c759"
   verde-feito-escuro: "#30d158"
-  verde-feito-texto: "#248a3d"
+  verde-feito-texto: "#1f7a35"
+  verde-feito-preenchimento: "#248a3d"
   vermelho-descartar: "#ff3b30"
   vermelho-descartar-escuro: "#ff453a"
   vermelho-descartar-texto: "#d70015"
@@ -127,7 +128,7 @@ components:
     height: "50px"
     width: "50px"
   set-check-done:
-    backgroundColor: "{colors.verde-feito}"
+    backgroundColor: "{colors.verde-feito-preenchimento}"
     textColor: "{colors.superficie-branca}"
   chip:
     backgroundColor: "{colors.preenchimento}"
@@ -167,10 +168,10 @@ Neutros do sistema iOS com um único acento laranja quente e um verde reservado 
 
 ### Primary
 - **Laranja Carga** (#ff9500; no escuro #ff9f0a): o botão principal (Iniciar, Salvar), o cartão do treino em andamento, a barra de progresso, o membro em esforço nas ilustrações e o fim do descanso, quando a pílula do timer fica toda laranja. O texto sobre ele é a **Tinta do Laranja** (#1f1200), nunca branco.
-- **Laranja Texto** (#c25e00; no escuro #ffb340): a versão do laranja com contraste para texto. Aba ativa, links, números dos exercícios, "Studio**Traino**".
+- **Laranja Texto** (#a04c00; no escuro #ffb340): a versão do laranja com contraste de 4,5:1 ou mais para texto, inclusive sobre o laranja suave. Aba ativa, links, números dos exercícios, "Studio**Traino**".
 
 ### Secondary
-- **Verde Feito** (#34c759; no escuro #30d158): a série concluída, o selo de exercício completo, o interruptor ligado e o ponto de "Sincronizado". O **Verde Feito Texto** (#248a3d) é usado quando o verde vira texto.
+- **Verde Feito** (#34c759; no escuro #30d158): a série concluída, o selo de exercício completo, o interruptor ligado e o ponto de "Sincronizado". O **Verde Feito Texto** (#1f7a35) é usado quando o verde vira texto. No tema claro, o check marcado usa o preenchimento #248a3d com ícone branco, e no escuro usa #30d158 com ícone quase preto (#00210b), para o ícone ter contraste.
 
 ### Tertiary
 - **Vermelho Descartar** (#ff3b30; no escuro #ff453a): só para destruir dados. Aparece no preenchimento dos botões de segurar para confirmar e nos links de remover. O **Vermelho Texto** (#d70015) é usado para o rótulo.
@@ -257,7 +258,10 @@ Cantos arredondados contínuos e um pouco mais suaves quanto maior a peça: 10px
 - **Barra de cima:** marca à esquerda e indicador de sincronização (que também é o botão de conta) à direita. Ao rolar, a marca some e o título da tela aparece no centro.
 
 ### Série (Signature Component)
-Uma linha com o número da série, o stepper de carga, o stepper de repetições e o check. Ao marcar o check, ele fica verde com o ícone branco, os steppers ganham um verde suave e o descanso começa sozinho. Quando todas as séries do exercício estão feitas, o cartão ganha um contorno verde de 2px e um selo que aparece com escala.
+Uma linha com o stepper de carga, o stepper de repetições e o check, que mostra o número da série até ser marcado. Os botões − e + têm 44px de largura (38px em telas com menos de 370px). Quando a carga passa da última vez, aparece uma pequena seta laranja acima do número. Ao marcar o check, ele fica verde com o ícone, os steppers ganham um verde suave e o descanso começa sozinho. Quando todas as séries do exercício estão feitas, o cartão ganha um contorno verde de 2px e um selo que aparece com escala.
+
+### Meta de Hoje (Signature Component)
+Abaixo do nome do exercício, a linha "Última vez, há 3 dias: 4 × 62,5 kg × 8" agrupa séries iguais. Embaixo dela vem a meta de hoje, pela regra de progressão dupla: se todas as séries da carga mais alta bateram o topo da faixa de repetições, aparece o botão laranja suave "Subir para 65 kg", que aplica a carga às séries não marcadas. Se não bateram, aparece a pílula cinza "Meta de hoje: 10 reps com 62,5 kg". O passo é 2 kg em halteres e 2,5 kg no resto.
 
 ### Timer de Descanso (Signature Component)
 Uma pílula escura que flutua acima da barra de abas, com o tempo em 38px, o nome do próximo exercício e os botões de −15 e +15 segundos. Uma barra laranja de 3px corre na base. Ao zerar, a pílula inteira vira laranja, vibra e toca um bipe. Arrastar para baixo dispensa.
@@ -278,3 +282,4 @@ Uma pílula escura que flutua acima da barra de abas, com o tempo em 38px, o nom
 - **Don't** ter dois elementos laranja chamando atenção na mesma tela.
 - **Don't** abrir uma tela nova no meio do treino para algo que cabe numa folha.
 - **Don't** usar caixa de diálogo de confirmar ou cancelar para apagar coisas. Use segurar para confirmar.
+- **Don't** colocar um rótulo pequeno acima do título (eyebrow). O título se sustenta sozinho.
