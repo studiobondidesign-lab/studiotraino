@@ -387,7 +387,7 @@ function saveSessions(){LS.set("st_sessions",sessions);}
 function pushSession(s){if(refs)enqueue(()=>refs.sessCol.doc(s.id).set(clone(s)));}
 function removeSession(id){sessions=sessions.filter(s=>s.id!==id);saveSessions();deleted.push(id);LS.set("st_deleted",deleted);
   if(refs)enqueue(()=>refs.sessCol.doc(id).delete());}
-const SB=(window.ST_CONFIG&&window.ST_CONFIG.supabaseUrl&&window.supabase)?window.supabase.createClient(window.ST_CONFIG.supabaseUrl,window.ST_CONFIG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,lock:(name,timeout,fn)=>fn()}}):null;
+const SB=(window.ST_CONFIG&&window.ST_CONFIG.supabaseUrl&&window.supabase)?window.supabase.createClient(window.ST_CONFIG.supabaseUrl,window.ST_CONFIG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
 let account=null;
 function sbRefs(uid){
   const T="st_docs";
