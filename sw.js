@@ -1,5 +1,5 @@
 /* Offline: keeps the app shell cached. Supabase requests go straight to the network. */
-const CACHE = "studiotraino-v3";
+const CACHE = "studiotraino-v4";
 const SHELL = ["./", "index.html", "config.js", "vendor/supabase.js", "manifest.webmanifest",
   "icons/icon-64.png", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png"];
 

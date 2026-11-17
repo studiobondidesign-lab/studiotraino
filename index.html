@@ -53,7 +53,7 @@
 html,body{background:var(--bg)}
 body{color:var(--fg);font-family:var(--f-ui);font-size:17px;line-height:1.35;letter-spacing:-.01em;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:0 calc(170px + env(safe-area-inset-bottom,0px))}
+  padding-block:env(safe-area-inset-top,0px) calc(170px + env(safe-area-inset-bottom,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
 .wrap{max-width:560px;margin:0 auto}
 button,input{font:inherit;color:inherit;letter-spacing:inherit}
@@ -387,7 +387,7 @@ function saveSessions(){LS.set("st_sessions",sessions);}
 function pushSession(s){if(refs)enqueue(()=>refs.sessCol.doc(s.id).set(clone(s)));}
 function removeSession(id){sessions=sessions.filter(s=>s.id!==id);saveSessions();deleted.push(id);LS.set("st_deleted",deleted);
   if(refs)enqueue(()=>refs.sessCol.doc(id).delete());}
-const SB=(window.ST_CONFIG&&window.ST_CONFIG.supabaseUrl&&window.supabase)?window.supabase.createClient(window.ST_CONFIG.supabaseUrl,window.ST_CONFIG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+const SB=(window.ST_CONFIG&&window.ST_CONFIG.supabaseUrl&&window.supabase)?window.supabase.createClient(window.ST_CONFIG.supabaseUrl,window.ST_CONFIG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,lock:(name,timeout,fn)=>fn()}}):null;
 let account=null;
 function sbRefs(uid){
   const T="st_docs";
@@ -404,7 +404,7 @@ async function initSync(){
   if(!SB){setSync("local");return}
   setSync("connecting");
   try{
-    const {data}=await SB.auth.getSession();
+    const {data}=await Promise.race([SB.auth.getSession(),new Promise((_,rej)=>setTimeout(()=>rej(new Error("auth timeout")),8000))]);
     const ses=data&&data.session;
     if(!ses){account=null;setSync("local");return}
     account=ses.user;
