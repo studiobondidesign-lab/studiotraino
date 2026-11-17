@@ -260,6 +260,16 @@ button.chip:active{transform:scale(.96)}
 .altmain{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;border-radius:12px}
 .nm{display:block;font-weight:600;font-size:16px;line-height:1.25;letter-spacing:-.01em}
 .mt{display:block;font-size:13px;color:var(--muted);margin-top:2px;letter-spacing:0}
+.tplrow{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;padding:12px 16px;position:relative;min-height:60px;background:var(--surface);transition:background-color 120ms ease}
+.tplrow:active{background:var(--fill)}
+.group .tplrow+.tplrow::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--sep)}
+.tplrow .tn{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.tplrow .tm{font-size:13px;color:var(--muted)}
+.tplex{background:var(--fill);border-radius:12px;padding:4px 12px}
+.tplex>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:15px}
+.tplex>div+div{border-top:.5px solid var(--sep)}
+.tplex .num{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.wkfoot{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .librow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:8px 12px;position:relative;min-height:64px;transition:background-color 120ms ease}
 .librow:active{background:var(--fill)}
 .group .librow+.librow::before{content:"";position:absolute;left:72px;right:0;top:0;height:.5px;background:var(--sep)}
@@ -519,6 +529,74 @@ function loadExamples(){
     {id:uid(),name:"Treino C · Pernas",exercises:[ex("Agachamento livre",4,"8",70,150),ex("Leg press",4,"10",160,120),ex("Cadeira extensora",3,"12",40,60),ex("Mesa flexora",3,"12",35,60),ex("Panturrilha em pé",4,"15",50,45)]});
   savePlans();
 }
+
+
+/* ---------- workout templates ----------
+   Well-known splits as a starting point. Each exercise line: name|sets|reps|rest seconds.
+   Loads start empty (0): the first session fills them in, and later sessions prefill from history. */
+const TEMPLATES=[
+ {id:"fullbody",name:"Full body",days:"3x por semana",level:"Iniciante",
+  desc:"Corpo inteiro em cada treino, alternando A e B. Bom para começar ou para quem treina 3 dias.",
+  w:[["A · Corpo inteiro",["Agachamento livre|3|8-10|150","Supino reto|3|8-10|120","Remada curvada|3|8-10|120","Desenvolvimento com halteres|3|10-12|90","Rosca direta|2|10-12|60","Abdominal supra|3|15|45"]],
+     ["B · Corpo inteiro",["Levantamento terra romeno|3|8-10|150","Supino inclinado com halteres|3|8-10|90","Puxada frontal|3|10-12|90","Elevação lateral|3|12-15|60","Tríceps na corda|2|10-12|60","Panturrilha em pé|3|12-15|45"]]]},
+ {id:"ab",name:"AB · Superior e inferior",days:"4x por semana",level:"Iniciante a intermediário",
+  desc:"Parte de cima num dia, pernas no outro. Cada músculo treina duas vezes por semana.",
+  w:[["A · Superior",["Supino reto|4|6-8|150","Remada curvada|4|6-8|120","Desenvolvimento com halteres|3|8-10|90","Puxada frontal|3|8-10|90","Rosca direta|3|10-12|60","Tríceps na corda|3|10-12|60"]],
+     ["B · Inferior",["Agachamento livre|4|6-8|180","Levantamento terra romeno|3|8-10|150","Leg press 45°|3|10-12|120","Mesa flexora|3|10-12|60","Panturrilha em pé|4|10-15|45","Prancha|3|30|45"]]]},
+ {id:"abc",name:"ABC",days:"3 a 6x por semana",level:"Intermediário",
+  desc:"A divisão clássica: peito, ombro e tríceps; costas e bíceps; pernas. Dá para fazer uma ou duas vezes por semana.",
+  w:[["A · Peito, ombro e tríceps",["Supino reto|4|8-10|120","Supino inclinado com halteres|3|10|90","Desenvolvimento com halteres|3|10|90","Elevação lateral|3|12-15|60","Tríceps na corda|3|12|60"]],
+     ["B · Costas e bíceps",["Puxada frontal|4|10|90","Remada curvada|4|8|120","Remada baixa|3|10|90","Rosca direta|3|10|60","Rosca martelo|3|12|60"]],
+     ["C · Pernas",["Agachamento livre|4|8|150","Leg press 45°|4|10|120","Cadeira extensora|3|12|60","Mesa flexora|3|12|60","Panturrilha em pé|4|15|45"]]]},
+ {id:"ppl",name:"Push, pull, legs",days:"3 ou 6x por semana",level:"Intermediário",
+  desc:"Empurrar, puxar e pernas. Separa os músculos pelo movimento: quem empurra treina junto, quem puxa também.",
+  w:[["Push · Empurrar",["Supino reto|4|6-8|150","Desenvolvimento com barra|3|6-8|120","Supino inclinado com halteres|3|8-10|90","Elevação lateral|4|12-15|60","Tríceps testa|3|8-10|90","Tríceps na corda|3|12-15|60"]],
+     ["Pull · Puxar",["Barra fixa|4|6-10|120","Remada curvada|4|6-8|120","Remada baixa|3|10-12|90","Face pull|3|12-15|60","Rosca direta barra W|3|8-10|60","Rosca martelo|3|10-12|60"]],
+     ["Legs · Pernas",["Agachamento livre|4|6-8|180","Levantamento terra romeno|3|8-10|150","Leg press 45°|3|10-12|120","Cadeira extensora|3|12-15|60","Mesa flexora|3|10-12|60","Panturrilha em pé|4|10-15|45"]]]},
+ {id:"abcd",name:"ABCD",days:"4x por semana",level:"Intermediário",
+  desc:"Quatro dias, com ombro num dia só para ele. Cada treino é mais curto e focado.",
+  w:[["A · Peito e tríceps",["Supino reto|4|8-10|120","Supino inclinado|3|8-10|120","Crucifixo com halteres|3|12|60","Tríceps testa|3|10|90","Tríceps na corda|3|12|60"]],
+     ["B · Costas e bíceps",["Puxada frontal|4|8-10|90","Remada cavalinho|3|8-10|120","Remada unilateral com halter (serrote)|3|10|90","Rosca direta|3|10|60","Rosca alternada|3|12|60"]],
+     ["C · Pernas",["Agachamento livre|4|8|180","Leg press 45°|3|10|120","Cadeira extensora|3|12|60","Stiff|3|10|120","Mesa flexora|3|12|60","Panturrilha sentado|4|15|45"]],
+     ["D · Ombro e abdômen",["Desenvolvimento com halteres|4|8-10|90","Elevação lateral|4|12-15|60","Crucifixo inverso na máquina|3|12-15|60","Elevação frontal|3|12|60","Abdominal na polia|3|12-15|45","Elevação de pernas|3|12-15|45"]]]},
+ {id:"abcde",name:"ABCDE",days:"5x por semana",level:"Avançado",
+  desc:"Um grupo muscular por dia, o modelo do fisiculturismo. Muito volume para cada músculo, uma vez por semana.",
+  w:[["A · Peito",["Supino reto|4|6-8|150","Supino inclinado com halteres|4|8-10|90","Supino articulado (Hammer)|3|10-12|90","Crucifixo inclinado com halteres|3|12|60","Crossover polia alta|3|12-15|60"]],
+     ["B · Costas",["Barra fixa|4|6-10|120","Remada curvada|4|8-10|120","Puxada com triângulo|3|10-12|90","Remada baixa|3|10-12|90","Pulldown com braços estendidos|3|12-15|60","Extensão lombar (banco romano)|3|12-15|60"]],
+     ["C · Pernas",["Agachamento livre|4|6-8|180","Agachamento hack|3|8-10|120","Leg press 45°|3|10-12|120","Cadeira extensora|3|12-15|60","Stiff|3|8-10|120","Mesa flexora|3|10-12|60","Panturrilha em pé|5|10-15|45"]],
+     ["D · Ombro",["Desenvolvimento com barra|4|6-8|120","Desenvolvimento na máquina|3|8-10|90","Elevação lateral|4|12-15|60","Elevação lateral na polia|3|12-15|60","Face pull|3|12-15|60","Crucifixo inverso com halteres|3|12-15|60"]],
+     ["E · Braços",["Rosca direta barra W|4|8-10|60","Tríceps testa|4|8-10|90","Rosca alternada|3|10-12|60","Tríceps francês na polia|3|10-12|60","Rosca martelo|3|10-12|60","Tríceps na corda|3|12-15|60"]]]},
+ {id:"phul",name:"PHUL · Força e hipertrofia",days:"4x por semana",level:"Intermediário a avançado",
+  desc:"Superior e inferior duas vezes: um dia pesado, de poucas repetições, e um dia de volume.",
+  w:[["Superior força",["Supino reto|4|3-5|180","Remada curvada|4|3-5|180","Desenvolvimento com barra|3|5-8|150","Puxada frontal|3|6-10|120","Rosca direta|2|6-10|90","Tríceps testa|2|6-10|90"]],
+     ["Inferior força",["Agachamento livre|4|3-5|180","Levantamento terra|3|3-5|180","Leg press 45°|3|10-12|120","Mesa flexora|3|6-10|90","Panturrilha em pé|4|6-10|60"]],
+     ["Superior volume",["Supino inclinado com halteres|4|8-12|90","Voador (peck deck)|3|8-12|60","Remada baixa|4|8-12|90","Remada unilateral com halter (serrote)|3|8-12|90","Elevação lateral|3|10-12|60","Rosca alternada|3|8-12|60","Tríceps na corda|3|8-12|60"]],
+     ["Inferior volume",["Agachamento hack|4|8-12|120","Agachamento búlgaro|3|8-12|90","Cadeira extensora|3|10-15|60","Cadeira flexora|3|10-15|60","Elevação pélvica|3|8-12|90","Panturrilha sentado|4|10-15|45"]]]},
+ {id:"5x5",name:"5×5 de força",days:"3x por semana",level:"Iniciante focado em força",
+  desc:"Poucos exercícios básicos, 5 séries de 5, alternando A e B. Sobe a carga sempre que completar as 5×5.",
+  w:[["A · Força",["Agachamento livre|5|5|180","Supino reto|5|5|180","Remada curvada|5|5|180"]],
+     ["B · Força",["Agachamento livre|5|5|180","Desenvolvimento com barra|5|5|180","Levantamento terra|1|5|180"]]]}
+];
+function tplWorkouts(t){return t.w.map(([n,list])=>({id:uid(),name:(/^[A-E] ·/.test(n)?"Treino ":"")+n,
+  exercises:list.map(l=>{const [name,s,r,rest]=l.split("|");return ex(name,+s,r,0,+rest)})}));}
+function openTemplates(){
+  sheetStack=[];
+  showSheet(`<h2 id="sheetTitle" style="font-size:24px">Modelos de treino</h2><p class="sub" style="margin-top:4px">Escolha uma ficha pronta como base. Depois é só editar o que quiser.</p>
+  <div class="group" style="margin-top:14px;background:var(--fill)">${TEMPLATES.map(t=>`<button class="tplrow" data-a="tpl-open" data-v="${t.id}"><span class="tn">${esc(t.name)}</span><span class="tm">${t.w.length} treinos · ${esc(t.days)} · ${esc(t.level)}</span></button>`).join("")}</div>`,true);
+}
+function openTemplate(id){
+  const t=TEMPLATES.find(x=>x.id===id);if(!t)return;const has=plans.workouts.length>0;
+  showSheet(`<button class="backlink" data-a="tpl-list" style="margin:-6px 0 4px">‹ Modelos</button><h2 id="sheetTitle" style="font-size:24px">${esc(t.name)}</h2>
+  <div class="chips"><span class="chip acc">${esc(t.days)}</span><span class="chip">${esc(t.level)}</span></div>
+  <p style="margin:12px 0 4px;font-size:16px;line-height:1.45">${esc(t.desc)}</p>
+  ${t.w.map(([n,list])=>`<div class="section">${esc((/^[A-E] ·/.test(n)?"Treino ":"")+n)}</div><div class="tplex">${list.map(l=>{const [name,s,r]=l.split("|");return `<div><span>${esc(name)}</span><span class="num">${s} × ${esc(r)}</span></div>`}).join("")}</div>`).join("")}
+  <p class="setnote" style="margin:14px 0 16px">As cargas começam vazias. No primeiro treino você coloca as suas, e depois o app preenche com a última vez.</p>
+  <div class="stack" style="gap:8px">${has?`<button class="btn primary block" data-a="tpl-add" data-v="${t.id}">Adicionar aos meus treinos</button>${holdBtn("tpl-replace",t.id,"Segure para trocar meus treinos por este","block")}`
+    :`<button class="btn primary block" data-a="tpl-add" data-v="${t.id}">Usar esta ficha</button>`}</div>`,true);
+  const b=document.getElementById("sheetBody");if(b)b.scrollTop=0;
+}
+function adoptTemplate(id,replace){const t=TEMPLATES.find(x=>x.id===id);if(!t)return;
+  const ws=tplWorkouts(t);plans.workouts=replace?ws:plans.workouts.concat(ws);savePlans();closeSheet();haptic([10,40,10]);ui.view="workouts";render();scrollTop();}
 
 /* ---------- exercise library ---------- */
 const SUBS={"peito-plano":["Peito","Supino reto"],"peito-inclinado":["Peito","Supino inclinado"],"peito-isolado":["Peito","Crucifixo e voador"],
@@ -836,8 +914,8 @@ function vWorkouts(){
   if(active)h+=`<div class="live press" data-a="tab" data-v="active" role="button" tabindex="0"><div class="spacer" style="min-width:0"><div class="t">${esc(active.name)}</div><div class="s num">Em andamento · <span data-clock>${hms(Date.now()-active.startedAt)}</span></div></div><span class="btn sm">Continuar</span></div>`;
   h+=`<h1>Treinos</h1><p class="sub">Escolha o treino de hoje e toque em Iniciar.</p><div class="stack" style="margin-top:16px">`;
   if(!ws.length){
-    if(SB&&!account)h+=`<div class="card empty"><h2>Seu treino está pronto?</h2><p>Se alguém montou o seu treino, entre na sua conta e ele aparece aqui. Se não, monte o seu ou comece por um exemplo.</p><div class="stack" style="gap:8px"><button class="btn primary block" data-a="account">Entrar na minha conta</button><button class="btn block" data-a="new">Montar meu treino</button><button class="btn plain block" data-a="examples">Usar treinos de exemplo</button></div></div>`;
-    else h+=`<div class="card empty"><h2>Monte seu primeiro treino</h2><p>Adicione exercícios com séries, repetições, carga e descanso. Se preferir, comece com uma divisão ABC de exemplo e ajuste do seu jeito.</p><div class="stack" style="gap:8px"><button class="btn primary block" data-a="new">Novo treino</button><button class="btn tinted block" data-a="examples">Usar treinos de exemplo</button></div></div>`;
+    if(SB&&!account)h+=`<div class="card empty"><h2>Seu treino está pronto?</h2><p>Se alguém montou o seu treino, entre na sua conta e ele aparece aqui. Se não, monte o seu ou comece por um exemplo.</p><div class="stack" style="gap:8px"><button class="btn primary block" data-a="account">Entrar na minha conta</button><button class="btn block" data-a="new">Montar meu treino</button><button class="btn plain block" data-a="templates">Escolher um modelo de treino</button></div></div>`;
+    else h+=`<div class="card empty"><h2>Monte seu primeiro treino</h2><p>Adicione exercícios com séries, repetições, carga e descanso. Se preferir, comece por um modelo conhecido, como ABC, ABCDE ou push, pull, legs, e ajuste do seu jeito.</p><div class="stack" style="gap:8px"><button class="btn primary block" data-a="new">Novo treino</button><button class="btn tinted block" data-a="templates">Escolher um modelo de treino</button></div></div>`;
   }else{
     /* the next workout in the rotation is the one done longest ago (never done counts as oldest) */
     const lastOf=w=>{const s=sessions.find(x=>x.workoutId===w.id);return s?s.startedAt:0};
@@ -850,7 +928,7 @@ function vWorkouts(){
       <p class="ex">${w.exercises.map(e=>esc(e.name)).join(" · ")||"Sem exercícios"}</p>
       <div class="actions"><button class="btn ${nextId&&w.id!==nextId?"tinted":"primary"}" data-a="start" data-v="${w.id}" ${w.exercises.length&&(!active||isLive)?"":"disabled"}>${isLive?"Continuar":"Iniciar"}</button><button class="btn" data-a="edit" data-v="${w.id}">Editar</button></div></div>`;
     });
-    h+=`<button class="btn tinted block" data-a="new">Novo treino</button>`;
+    h+=`<div class="wkfoot"><button class="btn tinted" data-a="new">Novo treino</button><button class="btn tinted" data-a="templates">Modelos</button></div>`;
     if(active)h+=`<p class="sub" style="text-align:center;font-size:13px">Conclua o treino em andamento para iniciar outro.</p>`;
   }
   view.innerHTML=h+"</div>";
@@ -1146,7 +1224,7 @@ window.addEventListener("blur",()=>{stopRep();cancelHold()});
 /* ---------- hold to confirm ---------- */
 let holdT=null;
 function cancelHold(){clearTimeout(holdT);document.querySelectorAll(".holding").forEach(x=>x.classList.remove("holding"));}
-function doHold(key,v){if(key==="logout"){acctLogout();return}
+function doHold(key,v){if(key==="logout"){acctLogout();return}if(key==="tpl-replace"){adoptTemplate(v,true);return}
   if(key==="discard"){active=null;closeSheet();saveActive();ui.view="workouts";render();scrollTop();}
   else if(key==="del-w"){plans.workouts=plans.workouts.filter(w=>w.id!==ui.draft.id);savePlans();ui.draft=null;ui.view="workouts";render();scrollTop();}
   else if(key==="del-s"){removeSession(v);render();}
@@ -1164,6 +1242,10 @@ document.addEventListener("click",ev=>{
       ui.view=v;ui.draft=null;if(v==="active")keepAwake();render();scrollTop();break;
     case "new": ui.draft={id:uid(),name:"",exercises:[ex("",3,"10",0,90)]};ui.view="edit";render();scrollTop();setTimeout(()=>{const n=document.getElementById("wname");n&&n.focus()},50);break;
     case "examples": loadExamples();render();break;
+    case "templates": openTemplates();break;
+    case "tpl-list": openTemplates();break;
+    case "tpl-open": openTemplate(v);break;
+    case "tpl-add": adoptTemplate(v,false);break;
     case "edit": ui.draft=clone(plans.workouts.find(w=>w.id===v));ui.view="edit";render();scrollTop();break;
     case "ex-add": ui.draft.exercises.push(ex("",3,"10",0,90));render();{const last=ui.draft.exercises[ui.draft.exercises.length-1];const el=document.getElementById("en-"+last.id);el&&el.focus();}break;
     case "ex-del": ui.draft.exercises.splice(+v,1);render();break;
