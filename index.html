@@ -24,7 +24,7 @@
   --done:#34c759; --done-text:#1f7a35; --done-soft:rgba(52,199,89,.14); --done-fill:#248a3d; --done-ink:#ffffff;
   --danger:#ff3b30; --danger-text:#d70015;
   --mat:rgba(246,246,248,.78); --mat-edge:rgba(0,0,0,.12);
-  --pill:rgba(30,30,32,.9); --pill-fg:#ffffff; --scrim:rgba(0,0,0,.32); --fig:#3a3a3c;
+  --seg-on:#ffffff; --pill:rgba(30,30,32,.9); --pill-fg:#ffffff; --scrim:rgba(0,0,0,.32); --fig:#3a3a3c;
   --f-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --f-num:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,sans-serif;
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
@@ -37,7 +37,7 @@
   --done:#30d158; --done-text:#30d158; --done-soft:rgba(48,209,88,.16); --done-fill:#30d158; --done-ink:#00210b;
   --danger:#ff453a; --danger-text:#ff6961;
   --mat:rgba(22,22,24,.74); --mat-edge:rgba(255,255,255,.1);
-  --pill:rgba(58,58,60,.92); --pill-fg:#ffffff; --scrim:rgba(0,0,0,.55); --fig:#d1d1d6;
+  --seg-on:#636366; --pill:rgba(58,58,60,.92); --pill-fg:#ffffff; --scrim:rgba(0,0,0,.55); --fig:#d1d1d6;
   color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#000000; --surface:#1c1c1e; --fill:rgba(118,118,128,.24); --fill-strong:rgba(118,118,128,.36);
@@ -46,7 +46,7 @@
   --done:#30d158; --done-text:#30d158; --done-soft:rgba(48,209,88,.16); --done-fill:#30d158; --done-ink:#00210b;
   --danger:#ff453a; --danger-text:#ff6961;
   --mat:rgba(22,22,24,.74); --mat-edge:rgba(255,255,255,.1);
-  --pill:rgba(58,58,60,.92); --pill-fg:#ffffff; --scrim:rgba(0,0,0,.55); --fig:#d1d1d6;
+  --seg-on:#636366; --pill:rgba(58,58,60,.92); --pill-fg:#ffffff; --scrim:rgba(0,0,0,.55); --fig:#d1d1d6;
   color-scheme:dark;}
 
 *{box-sizing:border-box}
@@ -275,6 +275,30 @@ button.chip:active{transform:scale(.96)}
 .sumgrid .v{font-family:var(--f-num);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .sumgrid .k{font-size:12px;color:var(--muted)}
 .toggle-row{display:flex;gap:12px;align-items:center;font-size:15px;line-height:1.35;padding:6px 0 14px}
+/* settings: inset grouped rows in the iOS idiom */
+.setgroup{background:var(--surface);border-radius:var(--r);overflow:hidden}
+.setrow{display:flex;align-items:center;gap:12px;min-height:50px;padding:6px 16px;position:relative;width:100%;text-align:left;font-size:17px}
+.setgroup>.setrow+.setrow::before,.setgroup>.setrow+form::before,.setgroup>form+.setrow::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--sep)}
+.setgroup>form{position:relative;display:block}
+.setrow .v{color:var(--muted);font-size:15px;margin-left:auto;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.setrow.act{color:var(--accent-text)}
+.setrow.danger{color:var(--danger-text)}
+button.setrow{transition:background-color 120ms ease}
+button.setrow:active{background:var(--fill)}
+.setrow .chev{width:14px;height:14px;color:var(--muted);flex:none;opacity:.7}
+.setrow .lbl{flex:1;min-width:0}
+.setrow .lbl small{display:block;font-size:13px;color:var(--muted);margin-top:1px}
+.setnote{font-size:13px;color:var(--muted);margin:8px 16px 0;line-height:1.4}
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill);border-radius:10px;padding:2px;flex:none}
+.seg button{min-width:52px;height:32px;padding:0 10px;border-radius:8px;font-size:14px;font-weight:500;color:var(--fg);transition:background-color 160ms ease}
+.seg button[aria-pressed="true"]{background:var(--seg-on);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
+.pwrow{display:flex;gap:8px;padding:8px 16px 12px}
+.pwrow input{flex:1;min-width:0;height:44px;border:0;border-radius:10px;background:var(--fill);padding:0 12px;font-size:17px;outline:none}
+.pwrow input:focus{box-shadow:inset 0 0 0 2px var(--accent)}
+.pwrow .btn{min-height:44px}
+.setmsg{font-size:14px;margin:0 16px 10px;color:var(--muted)}
+.setmsg.err{color:var(--danger-text)}
+.setmsg.ok{color:var(--done-text)}
 .switch{appearance:none;-webkit-appearance:none;flex:none;width:51px;height:31px;border-radius:999px;background:var(--fill-strong);position:relative;cursor:pointer;margin:0;transition:background-color 200ms ease}
 .switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 1px 1px rgba(0,0,0,.16);transition:transform 260ms var(--ease-out)}
 .switch:checked{background:var(--done)}
@@ -333,7 +357,7 @@ details[open] .chev{transform:rotate(90deg)}
 <header class="top" id="top"><div class="in">
   <div class="brand"><img src="icons/icon-64.png" alt="" width="22" height="22"><span>Studio<b>Traino</b></span></div>
   <div class="navtitle" id="navTitle"></div>
-  <button class="sync" id="sync" data-s="local" data-a="account" aria-label="Conta e sincronização"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 19.5c1.3-3.3 3.9-5 7-5s5.7 1.7 7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span>Entrar</span></button>
+  <button class="sync" id="sync" data-s="local" data-a="settings" aria-label="Ajustes e conta"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 19.5c1.3-3.3 3.9-5 7-5s5.7 1.7 7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span>Entrar</span></button>
 </div></header>
 <main class="wrap" id="view"></main>
 
@@ -369,9 +393,14 @@ let plans=LS.get("st_plans",{workouts:[],updatedAt:0});
 let sessions=LS.get("st_sessions",[]);
 let active=LS.get("st_active",null);
 let deleted=LS.get("st_deleted",[]);
+let settings=Object.assign({sound:true,vibrate:true,awake:true,stepDb:2,stepBar:2.5,theme:"auto"},LS.get("st_settings",{}));
+function saveSettings(){LS.set("st_settings",settings);}
+function applyTheme(){const r=document.documentElement;if(settings.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",settings.theme);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=settings.theme==="light"?"#f2f2f7":"#0b0b0d";}
+applyTheme();
 let ui={view:active?"active":"workouts",draft:null,sheet:false,updatePlan:true,swapPersist:false};
 const reduceMotion=()=>window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
-const haptic=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+const haptic=p=>{try{if(settings.vibrate&&navigator.vibrate)navigator.vibrate(p)}catch(e){}};
 
 /* ---------- sync (Supabase, private per person via row level security) ---------- */
 let refs=null;
@@ -468,7 +497,7 @@ function holdBtn(key,v,label,cls){return `<button class="btn hold ${cls||""}" da
 function parseRange(t){t=String(t||"");const m=t.match(/(\d+)\s*(?:-|–|a|até)\s*(\d+)/);if(m){const a=+m[1],b=+m[2];return {lo:Math.min(a,b),hi:Math.max(a,b)}}
   const n=t.match(/\d+/);return n?{lo:+n[0],hi:+n[0]}:null;}
 /* Load step: dumbbells usually go up 2 kg at a time, everything else 2,5 kg. */
-function incFor(name){const x=findEx(name);return x&&x.equip==="Halteres"?2:2.5;}
+function incFor(name){const x=findEx(name);return x&&x.equip==="Halteres"?(+settings.stepDb||2):(+settings.stepBar||2.5);}
 /* "4 × 62,5 kg × 8", grouping consecutive identical sets. */
 function fmtSets(sets){const g=[];sets.forEach(s=>{const l=g[g.length-1];if(l&&l.w===s.w&&l.r===s.r)l.n++;else g.push({w:s.w,r:s.r,n:1})});
   return g.map(x=>(x.n>1?x.n+" × ":"")+(x.w>0?fmtKg(x.w)+" kg × "+x.r:x.r+" reps")).join(" · ");}
@@ -789,7 +818,7 @@ const view=document.getElementById("view");
 function render(){
   if(ui.view==="active"&&!active)ui.view="workouts";
   if(ui.view==="edit"&&!ui.draft)ui.view="workouts";
-  ({workouts:vWorkouts,edit:vEdit,active:vActive,history:vHistory,library:vLibrary})[ui.view]();
+  ({workouts:vWorkouts,edit:vEdit,active:vActive,history:vHistory,library:vLibrary,settings:vSettings})[ui.view]();
   const h1=view.querySelector("h1");document.getElementById("navTitle").textContent=h1?h1.textContent:"";
   onScroll();renderTabs();renderRest();
 }
@@ -798,7 +827,7 @@ function renderTabs(){
   if(active)t.push(["active","Agora",'<circle cx="12" cy="13" r="7.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 9.5V13l2.3 2.3M10 2.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>']);
   t.push(["library","Exercícios",'<circle cx="12" cy="4.8" r="2.2" fill="currentColor"/><path d="M5 9.5l7 1.4 7-1.4M12 10.9v4.6M12 15.5l-3.6 5.2M12 15.5l3.6 5.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>']);
   t.push(["history","Histórico",'<path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>']);
-  const cur=ui.view==="edit"?"workouts":ui.view;
+  const cur=ui.view==="edit"?"workouts":ui.view;/* settings is reached from the header, so no tab is current there */
   document.querySelector("#tabs .in").innerHTML=t.map(([k,l,svg])=>`<button data-a="tab" data-v="${k}" ${cur===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${svg}</svg><span>${l}${k==="active"?'<span class="dot"></span>':""}</span></button>`).join("");
 }
 
@@ -888,6 +917,48 @@ function updateProgress(){const {done,total}=progressOf();const p=document.getEl
   const c=document.getElementById("count");if(c)c.textContent=`${done} de ${total} séries`;}
 function rerenderCard(i){const el=document.getElementById("ex-"+i);if(el){el.outerHTML=exCard(active.exercises[i],i);updateProgress();}}
 
+function segBtns(key,opts){return `<div class="seg" role="group">${opts.map(([v,l])=>`<button data-a="set-opt" data-k="${key}" data-v="${v}" aria-pressed="${String(settings[key])===String(v)}">${l}</button>`).join("")}</div>`}
+function swRow(key,label,note){return `<label class="setrow" for="st-${key}"><span class="lbl">${label}${note?`<small>${note}</small>`:""}</span><input type="checkbox" class="switch" id="st-${key}" data-f="setting" data-k="${key}" ${settings[key]?"checked":""}></label>`}
+function vSettings(){
+  const chev='<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+  let h=`<h1>Ajustes</h1><div class="section">Conta</div><div class="setgroup">`;
+  if(!SB){h+=`<div class="setrow"><span class="lbl">Sincronização<small>Não configurada. Os treinos ficam só neste aparelho.</small></span></div>`;}
+  else if(!account){h+=`<button class="setrow act" data-a="account"><span class="lbl">Entrar ou criar conta<small>Para salvar na nuvem e usar em qualquer aparelho</small></span>${chev}</button>`;}
+  else{
+    const st=document.getElementById("sync").dataset.s;
+    h+=`<div class="setrow"><span class="lbl">E-mail</span><span class="v">${esc(account.email||"")}</span></div>
+    <button class="setrow" data-a="acct-sync"><span class="lbl">Sincronizar agora</span><span class="v">${{synced:"Sincronizado",connecting:"Conectando…",offline:"Offline",local:""}[st]||""}</span></button>
+    <form id="pwForm" onsubmit="return false"><div class="setrow" style="padding-bottom:0"><span class="lbl">${ui.recovery?"Crie sua nova senha":"Trocar senha"}</span></div>
+    <div class="pwrow"><input id="newPass" type="password" autocomplete="new-password" placeholder="Nova senha (mín. 6)" aria-label="Nova senha"><button class="btn sm primary" data-a="pw-save">Salvar</button></div>
+    <p class="setmsg" id="pwMsg" role="status"></p></form>`;
+  }
+  h+=`</div>`;
+  if(SB&&account)h+=`<div style="margin-top:12px">${holdBtn("logout","","Segure para sair da conta","block")}</div><p class="setnote">Ao sair, os treinos são apagados deste aparelho. Eles continuam salvos na sua conta.</p>`;
+  h+=`<div class="section">Descanso</div><div class="setgroup">${swRow("sound","Som no fim do descanso")}${navigator.vibrate?swRow("vibrate","Vibrar no fim do descanso"):""}${swRow("awake","Manter a tela acesa no treino")}</div>`;
+  h+=`<div class="section">Passo de carga</div><div class="setgroup">
+    <div class="setrow"><span class="lbl">Halteres</span>${segBtns("stepDb",[[1,"1 kg"],[2,"2 kg"],[2.5,"2,5 kg"]])}</div>
+    <div class="setrow"><span class="lbl">Barra e máquinas</span>${segBtns("stepBar",[[2.5,"2,5 kg"],[5,"5 kg"]])}</div></div>
+    <p class="setnote">Usado nos botões − e + e no "Subir para" da meta de hoje.</p>`;
+  h+=`<div class="section">Aparência</div><div class="setgroup"><div class="setrow"><span class="lbl">Tema</span>${segBtns("theme",[["auto","Auto"],["light","Claro"],["dark","Escuro"]])}</div></div>`;
+  h+=`<div class="section">Dados</div><div class="setgroup"><button class="setrow act" data-a="export"><span class="lbl">Exportar meus treinos<small>${plans.workouts.length} treinos e ${sessions.length} sessões, em um arquivo</small></span>${chev}</button></div>`;
+  h+=`<p class="setnote" style="text-align:center;margin-top:24px">StudioTraino</p>`;
+  view.innerHTML=h;
+  if(ui.recovery)setTimeout(()=>{const p=document.getElementById("newPass");p&&p.focus()},300);
+}
+function exportData(){
+  const data={app:"StudioTraino",exportedAt:new Date().toISOString(),workouts:plans.workouts,sessions};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="studiotraino-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.parentNode&&a.parentNode.removeChild(a)},1000);
+}
+async function savePassword(){
+  const inp=document.getElementById("newPass"),m=document.getElementById("pwMsg");const set=(t,c)=>{if(m){m.textContent=t;m.className="setmsg"+(c?" "+c:"")}};
+  const p=(inp&&inp.value)||"";if(p.length<6){set("A senha precisa ter pelo menos 6 caracteres.","err");return}
+  if(!navigator.onLine){set("Sem internet agora. Tente quando estiver conectado.","err");return}
+  set("Salvando…");
+  try{const r=await SB.auth.updateUser({password:p});if(r.error)throw r.error;inp.value="";ui.recovery=false;set("Senha alterada.","ok");}
+  catch(e){set(e.message&&/different/i.test(e.message)?"A nova senha precisa ser diferente da atual.":"Não deu certo: "+e.message,"err")}
+}
 function vHistory(){
   const now=new Date();const monthStart=new Date(now.getFullYear(),now.getMonth(),1).getTime();
   const weekStart=Date.now()-7*86400000;
@@ -1028,10 +1099,10 @@ function renderRest(){
 }
 let actx=null;
 function ensureAudio(){try{if(!actx){const C=window.AudioContext||window.webkitAudioContext;if(C)actx=new C()}if(actx&&actx.state==="suspended")actx.resume()}catch(e){}}
-function beep(){if(!actx)return;try{const t0=actx.currentTime;[0,.22,.44].forEach((t,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type="sine";o.frequency.value=i===2?1318.5:987.8;
+function beep(){if(!actx||!settings.sound)return;try{const t0=actx.currentTime;[0,.22,.44].forEach((t,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type="sine";o.frequency.value=i===2?1318.5:987.8;
   g.gain.setValueAtTime(.0001,t0+t);g.gain.exponentialRampToValueAtTime(.35,t0+t+.015);g.gain.exponentialRampToValueAtTime(.0001,t0+t+(i===2?.45:.18));o.connect(g);g.connect(actx.destination);o.start(t0+t);o.stop(t0+t+.5);});}catch(e){}}
 let lock=null;
-async function keepAwake(){try{if(active&&navigator.wakeLock&&document.visibilityState==="visible"&&!lock){lock=await navigator.wakeLock.request("screen");lock.addEventListener("release",()=>{lock=null})}}catch(e){lock=null}}
+async function keepAwake(){try{if(settings.awake&&active&&navigator.wakeLock&&document.visibilityState==="visible"&&!lock){lock=await navigator.wakeLock.request("screen");lock.addEventListener("release",()=>{lock=null})}}catch(e){lock=null}}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){keepAwake();renderRest()}});
 setInterval(()=>{if(!active)return;const t=hms(Date.now()-active.startedAt);document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=t);renderRest();},500);
 
@@ -1143,7 +1214,8 @@ document.addEventListener("input",ev=>{
   else if(f==="sw"){active.exercises[i].sets[j].w=Math.max(0,parseNum(t.value));markUp(i,j);saveActive();}
   else if(f==="sr"){active.exercises[i].sets[j].r=Math.max(0,Math.round(parseNum(t.value)));saveActive();}
 });
-document.addEventListener("change",ev=>{if(ev.target.dataset.f==="updplan")ui.updatePlan=ev.target.checked;if(ev.target.dataset.f==="swappersist")ui.swapPersist=ev.target.checked;});
+document.addEventListener("change",ev=>{if(ev.target.dataset.f==="setting"){settings[ev.target.dataset.k]=ev.target.checked;saveSettings();if(ev.target.dataset.k==="awake"&&!ev.target.checked&&lock){try{lock.release()}catch(e){}}return}
+  if(ev.target.dataset.f==="updplan")ui.updatePlan=ev.target.checked;if(ev.target.dataset.f==="swappersist")ui.swapPersist=ev.target.checked;});
 document.addEventListener("focusin",ev=>{if(ev.target.matches(".step input"))setTimeout(()=>{try{ev.target.select()}catch(e){}},0)});
 
 /* nav bar material appears only once content is under it */
@@ -1158,7 +1230,7 @@ function openAccount(msg,err){
   if(account){
     showSheet(`<div class="acct"><h2 id="sheetTitle" style="font-size:22px">Sua conta</h2><p class="sub">${esc(account.email||"")}</p>
     <p class="msg">Seus treinos sincronizam entre todos os aparelhos em que você entrar.</p>
-    <div class="stack" style="gap:8px"><button class="btn block" data-a="acct-sync">Sincronizar agora</button>${holdBtn("logout","","Segure para sair","block")}<button class="btn plain block" data-a="sheet-close">Fechar</button></div></div>`,false);
+    <div class="stack" style="gap:8px"><button class="btn block" data-a="acct-sync">Sincronizar agora</button><button class="btn plain block" data-a="sheet-close">Fechar</button></div></div>`,false);
     return;
   }
   showSheet(`<div class="acct"><h2 id="sheetTitle" style="font-size:22px">Entrar</h2><p class="sub">Entre para salvar seus treinos na nuvem e usar em qualquer aparelho. Cada pessoa vê só os próprios dados.</p>
@@ -1196,6 +1268,11 @@ document.addEventListener("click",ev=>{
   const b=ev.target.closest("[data-a]");if(!b)return;
   switch(b.dataset.a){
     case "account": openAccount();break;
+    case "settings": if(ui.view==="settings"){window.scrollTo({top:0,behavior:"smooth"});break}ui.prev=ui.view;ui.view="settings";ui.draft=null;render();scrollTop();break;
+    case "set-opt":{const k=b.dataset.k;let v=b.dataset.v;if(k!=="theme")v=parseFloat(v);settings[k]=v;saveSettings();if(k==="theme")applyTheme();
+      b.parentNode.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));break;}
+    case "pw-save": savePassword();break;
+    case "export": exportData();break;
     case "acct-login": acctDo("login");break;
     case "acct-signup": acctDo("signup");break;
     case "acct-reset": acctDo("reset");break;
@@ -1203,7 +1280,7 @@ document.addEventListener("click",ev=>{
   }
 });
 if(SB)SB.auth.onAuthStateChange((evt)=>{
-  if(evt==="PASSWORD_RECOVERY"){const p=prompt("Digite a nova senha (mín. 6 caracteres)");if(p&&p.length>=6)SB.auth.updateUser({password:p}).then(r=>{if(!r.error)initSync().then(()=>render())});}
+  if(evt==="PASSWORD_RECOVERY"){ui.recovery=true;initSync().then(()=>{ui.view="settings";render();scrollTop();});}
 });
 window.addEventListener("online",()=>{if(SB)initSync().then(()=>render())});
 
