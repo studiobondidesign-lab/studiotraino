@@ -41,7 +41,8 @@ Um app pessoal, feito para duas pessoas e alguns amigos, em vez de um app de aca
 - Login por e-mail e senha (Supabase). Dados privados por pessoa, protegidos por row level security. Sem login, funciona só no aparelho.
 - Hospedado como site estático no Cloudflare Pages (studiotraino.pages.dev), sem etapa de build.
 - Interface toda em português do Brasil.
-- **Em aberto:** sugestão automática de progressão de carga (o Dan quer, ainda não existe e a regra não foi definida). Um jeito de o Dan montar o treino da Lívia sem precisar entrar na conta dela também não existe ainda.
+- **Progressão (pronta):** dupla progressão. Se todas as séries chegaram ao topo da faixa de repetições, o app sugere "Subir para X kg"; se não, "Buscar N reps com X kg". Os dois são botões que aplicam a meta nas séries ainda não feitas. O passo de carga vem dos Ajustes (halteres e barra/máquina).
+- **Em aberto:** um jeito de o Dan montar o treino da Lívia sem precisar entrar na conta dela.
 
 ## Brand Commitments
 
