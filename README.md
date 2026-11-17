@@ -38,6 +38,6 @@ Com o `config.js` vazio, o app funciona normalmente, mas os dados ficam só no a
 | `config.js` | Endereço e chave pública do Supabase |
 | `sw.js` | Service worker que guarda o app para funcionar offline |
 | `manifest.webmanifest`, `icons/` | Nome e ícone do app instalado |
-| `vendor/supabase.js` | Cliente do Supabase (supabase-js 2.45.4, licença MIT) |
+| `vendor/supabase.js` | Cliente do Supabase (supabase-js 2.118.0, licença MIT) |
 | `supabase/schema.sql` | Tabela e regras de acesso |
 | `_headers` | Cabeçalhos de cache do Cloudflare Pages |
