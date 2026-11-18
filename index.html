@@ -222,6 +222,24 @@ button.sync.login .person{display:block}
 .toast button{flex:none;min-height:36px;padding:0 12px;border-radius:12px;font-weight:600;color:var(--accent);background:rgba(255,255,255,.1)}
 .toast span:only-child{padding-right:10px}
 /* finish recap */
+.cardio .ttl{display:flex;align-items:center;gap:12px;padding:0 2px}
+.cardio .plan{color:var(--muted);font-size:14px;margin:3px 0 0}
+.cardio.on .cselect{display:block;margin-top:10px}
+.cselect select{width:100%;height:48px;border:0;border-radius:12px;background:var(--fill);padding:0 14px;font-size:17px;color:var(--fg);outline:none;-webkit-appearance:menulist}
+.cselect select:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.ctime{font-family:var(--f-num);font-size:38px;font-weight:700;line-height:1;text-align:center;margin:16px 0 14px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;transition:color 200ms ease}
+.cardio.run .ctime{color:var(--accent-text)}
+.cbtns{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px}
+.cbtns .btn{min-height:48px;padding:0 8px}
+.cardio.on>.plan{text-align:center;margin-top:12px}
+.energy{background:var(--fill);border-radius:12px;padding:12px 14px;margin:0 0 14px}
+.energy .ek{font-size:13px;color:var(--muted)}
+.ev{font-family:var(--f-num);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ev span{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+.bodyin{display:inline-flex;align-items:baseline;gap:6px;margin-left:auto}
+.bodyin input{width:84px;height:36px;border:0;border-radius:10px;background:var(--fill);text-align:right;padding:0 10px;font:inherit;font-size:17px;font-variant-numeric:tabular-nums;outline:none}
+.bodyin input:focus{box-shadow:inset 0 0 0 2px var(--accent)}
+.bodyin em{font-style:normal;color:var(--muted);font-size:15px;min-width:22px}
 .recap{text-align:left}
 .recap .rk{width:36px;height:36px;border-radius:50%;background:var(--done-fill);color:var(--done-ink);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
 .recap .rk svg{width:20px;height:20px}
@@ -388,6 +406,8 @@ button.setrow:active{background:var(--fill)}
 .hist .info .sub{font-size:14px}
 .hist .body{padding:2px 16px 16px}
 .hist table{width:100%;border-collapse:collapse;font-size:15px}
+.hist td:last-child{white-space:nowrap}
+.hist .tsub{display:block;font-size:13px;color:var(--muted);margin-top:1px}
 .hist td{padding:9px 0;vertical-align:top;border-top:.5px solid var(--sep)}
 .hist td:last-child{text-align:right;color:var(--muted);font-family:var(--f-num);font-variant-numeric:tabular-nums;padding-left:10px}
 .chev{color:var(--muted);transition:transform 200ms var(--ease-out);display:flex}
@@ -452,7 +472,7 @@ let plans=LS.get("st_plans",{workouts:[],updatedAt:0});
 let sessions=LS.get("st_sessions",[]);
 let active=LS.get("st_active",null);
 let deleted=LS.get("st_deleted",[]);
-let settings=Object.assign({sound:true,vibrate:true,awake:true,stepDb:2,stepBar:2.5,theme:"auto"},LS.get("st_settings",{}));
+let settings=Object.assign({sound:true,vibrate:true,awake:true,stepDb:2,stepBar:2.5,theme:"auto",weight:0,height:0},LS.get("st_settings",{}));
 function saveSettings(){LS.set("st_settings",settings);}
 function applyTheme(){const r=document.documentElement;if(settings.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",settings.theme);
   const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=settings.theme==="light"?"#f2f2f7":"#0b0b0d";}
@@ -541,6 +561,15 @@ function ago(ts){const d=Math.floor((Date.now()-ts)/86400000);if(d<=0)return "ho
 function lastFor(name){const key=name.trim().toLowerCase();
   for(const s of sessions){const e=s.exercises.find(x=>x.name.trim().toLowerCase()===key&&x.sets.some(t=>t.done));if(e)return {when:s.startedAt,sets:e.sets.filter(t=>t.done)};}
   return null;}
+/* cardio types with MET values from the Compendium of Physical Activities (approximate, moderate effort) */
+const CARDIO=[["esteira","Esteira · caminhada",4.3],["inclinada","Esteira · caminhada inclinada",6],["corrida","Esteira · corrida",9],["bike","Bicicleta ergométrica",7],["eliptico","Elíptico",5],["escada","Simulador de escada",9],["remo","Remo ergômetro",7],["corda","Pular corda",11],["outro","Outro cardio",6]];
+const CARDIO_BY=Object.fromEntries(CARDIO.map(c=>[c[0],{label:c[1],met:c[2]}]));
+const LIFT_MET=4.5;
+function cardioMs(c){return c?(c.ms||0)+(c.since?Date.now()-c.since:0):0}
+function energy(totalMs,c,w){w=+w;if(!(w>0))return null;
+  const cm=cardioMs(c),tot=Math.max(totalMs,cm),lm=tot-cm,met=(c&&CARDIO_BY[c.type]||CARDIO_BY.outro).met;
+  const lift=LIFT_MET*w*lm/3600000,car=cm>0?met*w*cm/3600000:0,all=lift+car;
+  return {lift:Math.round(lift),cardio:Math.round(car),total:Math.round(all),perMin:tot>0?Math.round(all/(tot/60000)*10)/10:0,w};}
 function volume(s){let v=0,n=0;s.exercises.forEach(e=>e.sets.forEach(t=>{if(t.done){v+=t.w*t.r;n++}}));return {v,n};}
 const I={
   check:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
@@ -669,13 +698,15 @@ const GROUPS=["Peito","Costas","Ombros","Bíceps","Tríceps","Quadríceps","Post
 const RAW=`Supino reto|peito-plano|supino_bb|Barra|Escápulas juntas e para baixo, pés firmes no chão;Desça a barra com controle até a linha do mamilo;Empurre para cima sem tirar o quadril do banco|supino reto com barra,supino|peito-medio
 Supino reto com halteres|peito-plano|supino_db|Halteres|Halteres na linha do peito, cotovelos a uns 45° do tronco;Desça até sentir o peito alongar;Suba aproximando os halteres sem bater um no outro|supino halteres|peito-medio
 Supino na máquina|peito-plano|chest_mq|Máquina|Ajuste o banco para a pegada ficar na linha do meio do peito;Costas apoiadas e escápulas encaixadas;Empurre sem travar os cotovelos e volte devagar|chest press,supino maquina,supino sentado|peito-medio
-Supino articulado (Hammer)|peito-plano|chest_hm|Articulado|Ajuste o banco com as manoplas na altura do peito;Empurre em arco, se quiser um braço de cada vez;Controle a volta até alongar|supino hammer,supino articulado|peito-medio
+Supino articulado (Hammer)|peito-plano|chest_hm|Articulado|Ajuste o banco com as manoplas na altura do peito;Empurre em arco, se quiser um braço de cada vez;Controle a volta até alongar|supino hammer,supino articulado,supino panatta,supino convergente|peito-medio
+Supino convergente (Panatta)|peito-plano|chest_hm|Articulado|Ajuste o banco com as manoplas na altura do peito;Empurre em arco convergente, juntando as mãos no fim;Controle a volta até alongar o peito|supino panatta,supino convergente,chest press panatta,supino hammer,supino articulado|peito-medio
 Supino reto no Smith|peito-plano|supino_sm|Smith|Posicione o banco para a barra descer na linha do mamilo;Destrave e desça com controle;Empurre mantendo as escápulas presas|supino smith|peito-medio
 Supino declinado|peito-plano|decline|Barra|Banco declinado com as pernas presas no apoio;Desça a barra até a parte de baixo do peito;Empurre sem tirar as escápulas do banco|supino declinado|peito-inf
 Supino inclinado|peito-inclinado|incl_bb|Barra|Banco entre 30° e 45°;Desça a barra até a parte de cima do peito;Empurre mantendo as escápulas presas no banco|supino inclinado com barra|peito-sup
 Supino inclinado com halteres|peito-inclinado|incl_db|Halteres|Banco entre 30° e 45°;Desça os halteres ao lado do peito, cotovelos a 45°;Suba em direção à linha dos olhos|supino inclinado halteres|peito-sup
 Supino inclinado no Smith|peito-inclinado|incl_sm|Smith|Banco a 30°, barra descendo na parte alta do peito;Desça com controle;Empurre sem descolar a lombar do banco|supino inclinado smith|peito-sup
-Supino inclinado articulado (Hammer)|peito-inclinado|incl_hm|Articulado|Ajuste o banco para a manopla ficar na altura da parte alta do peito;Empurre para cima e à frente;Volte devagar até alongar|supino inclinado hammer,supino inclinado maquina,supino inclinado articulado|peito-sup
+Supino inclinado articulado (Hammer)|peito-inclinado|incl_hm|Articulado|Ajuste o banco para a manopla ficar na altura da parte alta do peito;Empurre para cima e à frente;Volte devagar até alongar|supino inclinado hammer,supino inclinado maquina,supino inclinado articulado,supino inclinado panatta,supino inclinado convergente|peito-sup
+Supino inclinado convergente (Panatta)|peito-inclinado|incl_hm|Articulado|Ajuste o banco para a manopla ficar na altura da parte alta do peito;Empurre para cima e à frente, convergindo;Volte devagar até alongar|supino inclinado panatta,supino inclinado convergente,incline press panatta,supino inclinado hammer|peito-sup
 Crucifixo com halteres|peito-isolado|fly_db|Halteres|Deitado, cotovelos levemente dobrados e fixos;Abra os braços em arco até o peito alongar;Feche como se abraçasse uma árvore|crucifixo,crucifixo reto|peito-medio
 Crucifixo inclinado com halteres|peito-isolado|fly_incl|Halteres|Banco a 30°, cotovelos levemente dobrados;Abra em arco até alongar o peito;Feche sem bater os halteres|crucifixo inclinado|peito-sup
 Voador (peck deck)|peito-isolado|peckdeck|Máquina|Ajuste o banco com as manoplas na altura do peito;Feche os braços sem encolher os ombros;Volte devagar até alongar|voador,peck deck,fly maquina|peito-medio
@@ -685,14 +716,16 @@ Puxada frontal|costas-vertical|pulldown|Polia|Pegada um pouco mais aberta que os
 Puxada com triângulo|costas-vertical|pull_tri|Polia|Pegada neutra no triângulo;Puxe em direção ao peito com o tronco levemente inclinado;Controle a volta|puxada triangulo,puxada neutra,puxada fechada|dorsal
 Barra fixa|costas-vertical|pullup|Peso corporal|Pegada um pouco mais aberta que os ombros;Suba até o queixo passar a barra, sem balançar;Desça até quase estender os braços|barra,pull up|dorsal
 Barra fixa assistida (graviton)|costas-vertical|pullup_ast|Máquina|Ajuste o contrapeso para fazer de 8 a 12 repetições;Puxe até o queixo passar a barra;Desça devagar|graviton,barra assistida|dorsal
-Puxada articulada (Hammer)|costas-vertical|pull_hm|Articulado|Ajuste o banco para alcançar as manoplas com os braços estendidos;Puxe levando os cotovelos em direção ao quadril;Dá para fazer um braço de cada vez|puxada hammer,puxada maquina,puxada articulada|dorsal
+Puxada articulada (Hammer)|costas-vertical|pull_hm|Articulado|Ajuste o banco para alcançar as manoplas com os braços estendidos;Puxe levando os cotovelos em direção ao quadril;Dá para fazer um braço de cada vez|puxada hammer,puxada maquina,puxada articulada,puxada panatta,puxada convergente|dorsal
+Puxada convergente (Panatta)|costas-vertical|pull_hm|Articulado|Ajuste o banco para alcançar as manoplas com os braços estendidos;Puxe levando os cotovelos em direção ao quadril;Dá para fazer um braço de cada vez|puxada panatta,puxada convergente,lat pulldown panatta,puxada hammer|dorsal
 Pulldown com braços estendidos|costas-vertical|straightarm|Polia|Em pé, braços quase estendidos segurando a barra ou a corda;Leve as mãos até as coxas em arco;Sinta as costas e volte devagar|pullover na polia,pulldown bracos estendidos|dorsal
 Remada baixa|costas-horizontal|row|Polia|Sentado, joelhos levemente dobrados e coluna neutra;Puxe o triângulo até o abdômen levando os cotovelos para trás;Junte as escápulas e volte sem arredondar as costas|remada sentada,remada triangulo,remada baixa triangulo|costas-meio
 Remada baixa pegada aberta|costas-horizontal|row_wide|Polia|Barra reta com pegada aberta;Puxe até a linha do peito com os cotovelos abertos;Foco no meio das costas|remada aberta|costas-meio
 Remada curvada|costas-horizontal|bentrow|Barra|Tronco inclinado à frente, coluna neutra e joelhos levemente dobrados;Puxe a barra até a linha do umbigo;Desça com controle sem mexer o tronco|remada curvada com barra|costas-meio
 Remada unilateral com halter (serrote)|costas-horizontal|db_row|Halteres|Joelho e mão apoiados no banco, costas retas;Puxe o halter em direção ao quadril;Desça até alongar as costas|serrote,remada unilateral|dorsal
 Remada cavalinho|costas-horizontal|tbar|Barra|Pés firmes, tronco inclinado e coluna neutra;Puxe a pegada até o peito;Desça devagar sem perder a postura|remada t,t bar,remada cavalinho|costas-meio
-Remada articulada (Hammer)|costas-horizontal|row_hm|Articulado|Peito apoiado no encosto;Puxe as manoplas levando os cotovelos para trás;Aperte as escápulas e volte devagar|remada hammer,remada articulada|costas-meio
+Remada articulada (Hammer)|costas-horizontal|row_hm|Articulado|Peito apoiado no encosto;Puxe as manoplas levando os cotovelos para trás;Aperte as escápulas e volte devagar|remada hammer,remada articulada,remada panatta,remada convergente|costas-meio
+Remada convergente (Panatta)|costas-horizontal|row_hm|Articulado|Peito apoiado no encosto;Puxe as manoplas levando os cotovelos para trás;Aperte as escápulas e volte devagar|remada panatta,remada convergente,low row panatta,remada hammer|costas-meio
 Remada na máquina|costas-horizontal|row_mq|Máquina|Ajuste o banco para a pegada ficar na altura do peito;Puxe sem tirar o peito do apoio;Controle a volta|remada maquina,remada sentada maquina|costas-meio
 Desenvolvimento com halteres|ombro-press|press_db|Halteres|Sentado, costas apoiadas, halteres na altura das orelhas;Empurre para cima sem bater os halteres;Desça até a linha do queixo|desenvolvimento,desenvolvimento halteres|ombro-ant
 Desenvolvimento com barra|ombro-press|press_bb|Barra|Barra à frente, apoiada na parte alta do peito;Empurre para cima passando perto do rosto;Abdômen firme para não arquear a lombar|desenvolvimento militar|ombro-ant
@@ -1047,12 +1080,22 @@ function exCard(e,i){
     ${e.sets.map((s,j)=>setRow(i,j,s)).join("")}
     </div><div class="setbtns"><button class="btn sm" data-a="set-add" data-i="${i}">+ Série</button>${e.sets.length>1?`<button class="btn sm" data-a="set-del" data-i="${i}">− Série</button>`:""}<span class="spacer"></span><button class="btn sm tinted" data-a="swap-open" data-i="${i}">${I.swap} Trocar</button></div></div>`;
 }
+function cardioCard(){const c=active.cardio;
+  if(!c)return `<div class="card cardio" id="cardio-card"><div class="ttl"><div class="spacer" style="min-width:0"><h2>Cardio</h2><p class="plan">Opcional. Conta no gasto de energia do treino.</p></div><button class="btn sm tinted" data-a="cardio-add">Adicionar</button></div></div>`;
+  const ms=cardioMs(c),run=!!c.since,w=+settings.weight,met=(CARDIO_BY[c.type]||CARDIO_BY.outro).met;
+  return `<div class="card cardio on ${run?"run":""}" id="cardio-card"><div class="ttl"><div class="spacer" style="min-width:0"><h2>Cardio</h2></div><button class="linkbtn press" data-a="cardio-del">Remover</button></div>
+    <label class="cselect"><span class="vh">Tipo de cardio</span><select data-f="cardiotype" aria-label="Tipo de cardio">${CARDIO.map(x=>`<option value="${x[0]}" ${x[0]===c.type?"selected":""}>${esc(x[1])}</option>`).join("")}</select></label>
+    <div class="ctime num" data-cardio aria-live="off">${mmss(ms/1000)}</div>
+    <div class="cbtns"><button class="btn" data-a="cardio-adj" data-v="-5" aria-label="Menos 5 minutos">−5 min</button><button class="btn tinted" data-a="cardio-toggle">${run?"Pausar":(ms>0?"Continuar":"Iniciar")}</button><button class="btn" data-a="cardio-adj" data-v="5" aria-label="Mais 5 minutos">+5 min</button></div>
+    <p class="plan num" data-ckcal>${w>0?"≈ "+Math.round(met*w*ms/3600000)+" kcal até agora":'Informe seu peso nos Ajustes para ver o gasto.'}</p></div>`;}
+function rerenderCardio(){const el=document.getElementById("cardio-card");if(el)el.outerHTML=cardioCard();}
 function vActive(){
   const a=active;const {done,total}=progressOf();
   const parts=String(a.name).split(" · ");const short=parts[0];const rest=parts.slice(1).join(" · ");
   let h=`<div class="livehead"><div style="min-width:0"><h1>${esc(short)}</h1>${rest?`<p class="sub">${esc(rest)}</p>`:""}</div><div style="text-align:right;flex:none"><div class="clock" data-clock>${hms(Date.now()-a.startedAt)}</div><div class="sub num" id="count">${done} de ${total} séries</div></div></div>
   <div class="progress" aria-hidden="true"><i id="prog" style="transform:scaleX(${total?done/total:0})"></i></div><div class="stack" style="margin-top:14px">`;
   a.exercises.forEach((e,i)=>{h+=exCard(e,i)});
+  h+=cardioCard();
   h+=`<button class="btn primary block" data-a="finish" style="margin-top:4px">Concluir treino</button>`;
   view.innerHTML=h+"</div>";
 }
@@ -1082,12 +1125,20 @@ function vSettings(){
     <div class="setrow"><span class="lbl">Halteres</span>${segBtns("stepDb",[[1,"1 kg"],[2,"2 kg"],[2.5,"2,5 kg"]])}</div>
     <div class="setrow"><span class="lbl">Barra e máquinas</span>${segBtns("stepBar",[[2.5,"2,5 kg"],[5,"5 kg"]])}</div></div>
     <p class="setnote">Usado nos botões − e + e no "Subir para" da meta de hoje.</p>`;
+  h+=`<div class="section">Seu corpo</div><div class="setgroup">
+    <label class="setrow" for="st-weight"><span class="lbl">Peso</span><span class="bodyin"><input id="st-weight" data-f="body" data-k="weight" inputmode="decimal" value="${settings.weight?fmtKg(settings.weight):""}" placeholder="0" aria-label="Peso em quilos"><em>kg</em></span></label>
+    <label class="setrow" for="st-height"><span class="lbl">Altura</span><span class="bodyin"><input id="st-height" data-f="body" data-k="height" inputmode="numeric" value="${settings.height||""}" placeholder="0" aria-label="Altura em centímetros"><em>cm</em></span></label></div>
+    <p class="setnote" id="bodyNote">${bodyNote()}</p>`;
   h+=`<div class="section">Aparência</div><div class="setgroup"><div class="setrow"><span class="lbl">Tema</span>${segBtns("theme",[["auto","Auto"],["light","Claro"],["dark","Escuro"]])}</div></div>`;
   h+=`<div class="section">Dados</div><div class="setgroup"><button class="setrow act" data-a="export"><span class="lbl">Exportar meus treinos<small>${plans.workouts.length} treinos e ${sessions.length} sessões, em um arquivo</small></span>${chev}</button></div>`;
   h+=`<p class="setnote" style="text-align:center;margin-top:24px">StudioTraino</p>`;
   view.innerHTML=h;
   if(ui.recovery)setTimeout(()=>{const p=document.getElementById("newPass");p&&p.focus()},300);
 }
+function bodyNote(){const w=+settings.weight,hh=+settings.height;
+  if(!(w>0))return "O gasto de energia do treino é uma estimativa feita com o seu peso. Informe o peso para ver o gasto ao concluir o treino.";
+  const bmi=hh>0?` IMC ${(w/Math.pow(hh/100,2)).toLocaleString("pt-BR",{maximumFractionDigits:1})}.`:"";
+  return "O gasto é calculado com o seu peso (MET × peso × tempo). A altura só entra no IMC."+bmi+" Esses dados ficam só neste aparelho.";}
 function exportData(){
   const data={app:"StudioTraino",exportedAt:new Date().toISOString(),workouts:plans.workouts,sessions};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);
@@ -1115,9 +1166,9 @@ function vHistory(){
     const d=new Date(s.startedAt);const {v,n}=volume(s);
     const ups=s.exercises.map(e=>{const m=maxOf(e),p=m==null?null:prevMax(idx,e.name);return p!=null&&m>p?m-p:0});const nUp=ups.filter(x=>x>0).length;
     if(s.id===ui.justFinished){const upl=s.exercises.map((e,k)=>[e,ups[k]]).filter(([,u])=>u>0);
-      h=h.replace("<!--recap-->",`<div class="card recap" role="status"><div class="rk">${I.check}</div><h2>Treino salvo</h2><p class="sub num">${esc(s.name)} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries</p>${upl.length?`<ul class="changes">${upl.map(([e,u])=>`<li><span>${esc(e.name)}</span><span class="delta" style="margin:0">+${fmtKg(u)} kg</span></li>`).join("")}</ul>`:`<p class="rnote">${idx===sessions.length-1?"Primeiro treino registrado. Da próxima vez o app mostra estas cargas e sugere quando subir.":"Cargas mantidas. Da próxima vez o app mostra a meta de cada exercício."}</p>`}</div>`);}
-    h+=`<details class="card hist"><summary><div class="date"><div class="m">${MES[d.getMonth()]}</div><div class="d">${d.getDate()}</div></div><div class="info"><div class="t">${esc(s.name)}</div><div class="sub num">${DIA[d.getDay()]} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries · ${fmtKg(Math.round(v))} kg${nUp?` · <span class="delta" style="margin:0">${nUp===1?"1 carga subiu":nUp+" cargas subiram"}</span>`:""}</div></div><span class="chev">${I.chev}</span></summary>
-    <div class="body"><table>${s.exercises.map((e,k)=>[e,ups[k]]).filter(([e])=>e.sets.some(t=>t.done)).map(([e,up])=>`<tr><td>${esc(e.name)}${up>0?`<span class="delta">+${fmtKg(up)} kg</span>`:""}</td><td class="num">${fmtSets(e.sets.filter(t=>t.done))}</td></tr>`).join("")||'<tr><td>Nenhuma série marcada</td><td></td></tr>'}</table>
+      h=h.replace("<!--recap-->",`<div class="card recap" role="status"><div class="rk">${I.check}</div><h2>Treino salvo</h2><p class="sub num">${esc(s.name)} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries</p>${s.kcal?`<div class="ev num" style="margin-top:10px">${s.kcal.total.toLocaleString("pt-BR")} <span>kcal estimadas</span></div>`:""}${upl.length?`<ul class="changes">${upl.map(([e,u])=>`<li><span>${esc(e.name)}</span><span class="delta" style="margin:0">+${fmtKg(u)} kg</span></li>`).join("")}</ul>`:`<p class="rnote">${idx===sessions.length-1?"Primeiro treino registrado. Da próxima vez o app mostra estas cargas e sugere quando subir.":"Cargas mantidas. Da próxima vez o app mostra a meta de cada exercício."}</p>`}</div>`);}
+    h+=`<details class="card hist"><summary><div class="date"><div class="m">${MES[d.getMonth()]}</div><div class="d">${d.getDate()}</div></div><div class="info"><div class="t">${esc(s.name)}</div><div class="sub num">${DIA[d.getDay()]} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries · ${fmtKg(Math.round(v))} kg${s.kcal?` · ${s.kcal.total.toLocaleString("pt-BR")} kcal`:""}${nUp?` · <span class="delta" style="margin:0">${nUp===1?"1 carga subiu":nUp+" cargas subiram"}</span>`:""}</div></div><span class="chev">${I.chev}</span></summary>
+    <div class="body"><table>${s.exercises.map((e,k)=>[e,ups[k]]).filter(([e])=>e.sets.some(t=>t.done)).map(([e,up])=>`<tr><td>${esc(e.name)}${up>0?`<span class="delta">+${fmtKg(up)} kg</span>`:""}</td><td class="num">${fmtSets(e.sets.filter(t=>t.done))}</td></tr>`).join("")||(s.cardio?"":'<tr><td>Nenhuma série marcada</td><td></td></tr>')}${s.cardio?`<tr><td>Cardio · ${esc((CARDIO_BY[s.cardio.type]||CARDIO_BY.outro).label)}</td><td class="num">${Math.max(1,Math.round(s.cardio.sec/60))} min</td></tr>`:""}${s.kcal?`<tr><td>Gasto estimado<small class="tsub">musculação ${s.kcal.lift} · cardio ${s.kcal.cardio}</small></td><td class="num">${s.kcal.total.toLocaleString("pt-BR")} kcal</td></tr>`:""}</table>
     <div style="margin-top:12px">${holdBtn("del-s",s.id,"Segure para apagar","block")}</div></div></details>`;
   });
   view.innerHTML=h+"</div>";
@@ -1136,12 +1187,17 @@ function planChanges(a,w){const out=[];
   a.exercises.forEach(e=>{const pe=w.exercises.find(x=>x.name.trim().toLowerCase()===e.name.trim().toLowerCase());
     const ds=e.sets.filter(s=>s.done);if(pe&&ds.length){const mx=Math.max(...ds.map(s=>s.w));if(mx!==+pe.weight)out.push({name:e.name,from:+pe.weight||0,to:mx});}});
   return out;}
+function energyBlock(a){const cm=cardioMs(a.cardio);const e=energy(Date.now()-a.startedAt,a.cardio,settings.weight);
+  if(!e)return `<div class="energy"><div class="ek">Gasto de energia</div><p class="rnote" style="margin:4px 0 0">Informe seu peso para estimar quantas calorias você gastou, com a musculação e o cardio.</p><button class="btn sm tinted" style="margin-top:10px" data-a="finish-body">Informar peso</button></div>`;
+  return `<div class="energy"><div class="ek">Gasto de energia, estimado</div><div class="ev num">${e.total.toLocaleString("pt-BR")} <span>kcal</span></div>
+    <ul class="changes" style="margin:10px 0 0"><li><span>Musculação</span><span>${e.lift.toLocaleString("pt-BR")} kcal</span></li>${cm>=30000?`<li><span>${esc(CARDIO_BY[a.cardio.type].label)} · ${Math.max(1,Math.round(cm/60000))} min</span><span>${e.cardio.toLocaleString("pt-BR")} kcal</span></li>`:""}<li><span>Média do treino</span><span>${e.perMin.toLocaleString("pt-BR")} kcal/min</span></li></ul></div>`;}
 function openFinish(){
   const a=active;const {done,total}=progressOf();const {v}=volume(a);
   const plan=plans.workouts.find(w=>w.id===a.workoutId);const changes=plan?planChanges(a,plan):[];
   sheetStack=[];
   showSheet(`<h2 id="sheetTitle" style="font-size:22px">Concluir treino</h2><p class="sub">${esc(a.name)}</p>
   <div class="sumgrid"><div><div class="v" data-clock>${hms(Date.now()-a.startedAt)}</div><div class="k">Tempo</div></div><div><div class="v">${done}/${total}</div><div class="k">Séries</div></div><div><div class="v">${fmtKg(Math.round(v))}</div><div class="k">kg levantados</div></div></div>
+  ${energyBlock(a)}
   ${done<total?`<p class="warn">${total-done===1?"1 série não marcada não entra":(total-done)+" séries não marcadas não entram"} no histórico.</p>`:""}
   ${changes.length?`<label class="toggle-row" for="updplan"><span class="spacer">Salvar as cargas novas no treino</span><input type="checkbox" class="switch" id="updplan" data-f="updplan" ${ui.updatePlan?"checked":""}></label><ul class="changes">${changes.map(c=>`<li><span>${esc(c.name)}</span><span>${fmtKg(c.from)} → ${fmtKg(c.to)} kg</span></li>`).join("")}</ul>`:""}
   <div class="stack" style="gap:8px"><button class="btn primary block" data-a="finish-save">Salvar no histórico</button><button class="btn block" data-a="sheet-close">Continuar treinando</button>${holdBtn("discard","","Segure para descartar","block")}</div>`,false);
@@ -1157,7 +1213,7 @@ function renderInfo(focusAlts){
   let h="";
   if(x){
     h+=`<div class="illo illo-big">${figure(x.pattern,true)}</div><h2 id="sheetTitle" style="font-size:24px">${esc(x.name)}</h2>
-    <div class="chips"><span class="chip acc">${esc(x.portionLabel)}</span><span class="chip">${esc(x.equip)}</span></div>`;
+    <div class="chips"><span class="chip acc">${esc(x.portionLabel)}</span><span class="chip">${esc(x.equip==="Articulado"?"Articulado · Hammer ou Panatta":x.equip)}</span></div>`;
     if(canSwap&&norm(x.name)!==norm(cur))h+=`<button class="btn primary block" style="margin-top:14px" data-a="swap" data-v="${x.id}">Trocar ${esc(cur||"")} por este</button>`;
     h+=`<div class="section">Como fazer</div><ol class="cues">${x.cues.map(c=>`<li>${esc(c)}</li>`).join("")}</ol>`;
   }else{
@@ -1214,8 +1270,12 @@ function startWorkout(wid){
 }
 function finishWorkout(){
   const a=active;a.endedAt=Date.now();
+  if(a.cardio&&a.cardio.since){a.cardio.ms+=a.endedAt-a.cardio.since;a.cardio.since=null;}
+  const cm=cardioMs(a.cardio);const en=energy(a.endedAt-a.startedAt,a.cardio,settings.weight);
   const rec={id:a.id,workoutId:a.workoutId,name:a.name,startedAt:a.startedAt,endedAt:a.endedAt,
     exercises:a.exercises.map(e=>({name:e.name,sets:e.sets.map(s=>({w:s.w,r:s.r,done:s.done}))}))};
+  if(cm>=30000)rec.cardio={type:a.cardio.type,sec:Math.round(cm/1000)};
+  if(en)rec.kcal={lift:en.lift,cardio:cm>=30000?en.cardio:0,total:en.total,w:en.w};
   sessions.unshift(rec);saveSessions();pushSession(rec);
   const w=plans.workouts.find(x=>x.id===a.workoutId);
   if(w&&ui.updatePlan){let changed=false;
@@ -1249,7 +1309,10 @@ function beep(){if(!actx||!settings.sound)return;try{const t0=actx.currentTime;[
 let lock=null;
 async function keepAwake(){try{if(settings.awake&&active&&navigator.wakeLock&&document.visibilityState==="visible"&&!lock){lock=await navigator.wakeLock.request("screen");lock.addEventListener("release",()=>{lock=null})}}catch(e){lock=null}}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){keepAwake();renderRest()}});
-setInterval(()=>{if(!active)return;const t=hms(Date.now()-active.startedAt);document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=t);renderRest();},500);
+setInterval(()=>{if(!active)return;const t=hms(Date.now()-active.startedAt);document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=t);
+  if(active.cardio){const ms=cardioMs(active.cardio);document.querySelectorAll("[data-cardio]").forEach(el=>el.textContent=mmss(ms/1000));
+    const w=+settings.weight;document.querySelectorAll("[data-ckcal]").forEach(el=>{if(w>0)el.textContent="≈ "+Math.round((CARDIO_BY[active.cardio.type]||CARDIO_BY.outro).met*w*ms/3600000)+" kcal até agora"});}
+  renderRest();},500);
 
 /* ---------- drag to dismiss (rest pill + sheet) ---------- */
 function rubber(over,dim){const c=.55;return (over*dim*c)/(dim+c*over);}
@@ -1326,6 +1389,11 @@ document.addEventListener("click",ev=>{
       const k=plans.workouts.findIndex(w=>w.id===d.id);if(k>=0)plans.workouts[k]=d;else plans.workouts.push(d);
       savePlans();ui.draft=null;saveDraft();ui.view="workouts";render();scrollTop();haptic(10);toast(`“${d.name}” salvo`);break;}
     case "start": startWorkout(v);break;
+    case "cardio-add":{active.cardio={type:settings.lastCardio&&CARDIO_BY[settings.lastCardio]?settings.lastCardio:"esteira",ms:0,since:null};haptic(10);saveActive();rerenderCardio();break;}
+    case "cardio-toggle":{const c=active.cardio;if(!c)break;if(c.since){c.ms+=Date.now()-c.since;c.since=null}else c.since=Date.now();haptic(12);saveActive();rerenderCardio();break;}
+    case "cardio-adj":{const c=active.cardio;if(!c)break;const cur=cardioMs(c);const nx=Math.max(0,cur+(+v)*60000);if(c.since)c.since=Date.now();c.ms=nx;haptic(8);saveActive();rerenderCardio();break;}
+    case "cardio-del":{const old=active.cardio;active.cardio=null;saveActive();rerenderCardio();toast("Cardio removido",()=>{if(!active||active.cardio)return;active.cardio=old;saveActive();if(ui.view==="active")rerenderCardio();});break;}
+    case "finish-body":{closeSheet();ui.prev=ui.view;ui.view="settings";render();scrollTop();setTimeout(()=>{const e=document.getElementById("st-weight");e&&e.focus()},300);break;}
     case "undo":{const u=toastUndo;hideToast();if(u){haptic(10);u();}break;}
     case "toggle":{const e=active.exercises[i],s=e.sets[j];const wasComplete=e.sets.every(x=>x.done);s.done=!s.done;
       const row=document.getElementById(`set-${i}-${j}`);row.classList.toggle("done",s.done);b.setAttribute("aria-pressed",s.done);
@@ -1334,7 +1402,7 @@ document.addEventListener("click",ev=>{
         if(!reduceMotion()){const svg=b.querySelector("svg");svg&&svg.animate([{transform:"scale(.5)",opacity:.4},{transform:"scale(1)",opacity:1}],{duration:260,easing:"cubic-bezier(.23,1,.32,1)"});}
         const allDone=active.exercises.every(x=>x.sets.every(y=>y.done));
         if(!allDone&&e.rest>0){const nj=e.sets.findIndex(x=>!x.done);const nx=nj<0?active.exercises.find((x,k)=>k>i&&x.sets.some(y=>!y.done))||active.exercises.find(x=>x.sets.some(y=>!y.done)):null;
-          startRest(e.rest,nj>=0?`Próxima: série ${nj+1} de ${e.sets.length}`:(nx?"Próximo: "+nx.name:e.name));}else{active.rest=null;renderRest();}
+          startRest(e.rest,nj>=0?`Série ${nj+1} de ${e.sets.length}`:(nx?"Próximo: "+nx.name:e.name));}else{active.rest=null;renderRest();}
         if(complete&&!wasComplete){const nextI=active.exercises.findIndex((x,k)=>k>i&&!x.sets.every(y=>y.done));
           if(nextI>=0)setTimeout(()=>{const n=document.getElementById("ex-"+nextI);n&&n.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})},450);}
       }
@@ -1362,7 +1430,8 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&ui.sheet)closeSheet
   if((e.key==="Enter"||e.key===" ")&&e.target.matches('.live[role="button"]')){e.preventDefault();e.target.click();}});
 document.addEventListener("input",ev=>{
   const t=ev.target,f=t.dataset.f;if(!f)return;const i=+t.dataset.i,j=+t.dataset.j;
-  if(f==="wname"){ui.draft.name=t.value;saveDraft();}
+  if(f==="body"){const v=parseNum(t.value);settings[t.dataset.k]=t.dataset.k==="weight"?Math.min(400,Math.max(0,v)):Math.min(260,Math.max(0,Math.round(v)));saveSettings();const bn=document.getElementById("bodyNote");if(bn)bn.textContent=bodyNote();}
+  else if(f==="wname"){ui.draft.name=t.value;saveDraft();}
   else if(["name","sets","reps","weight","rest","notes"].includes(f)){ui.draft.exercises[i][f]=t.value;saveDraft();
     if(f==="name"){const tile=document.getElementById("eil-"+ui.draft.exercises[i].id);if(tile)tile.innerHTML=figFor(t.value,false);}}
   else if(f==="libq"){libQ=t.value;renderLibList();}
@@ -1372,6 +1441,7 @@ document.addEventListener("input",ev=>{
   else if(f==="sr"){active.exercises[i].sets[j].r=Math.max(0,Math.round(parseNum(t.value)));saveActive();}
 });
 document.addEventListener("change",ev=>{if(ev.target.dataset.f==="setting"){settings[ev.target.dataset.k]=ev.target.checked;saveSettings();if(ev.target.dataset.k==="awake"&&!ev.target.checked&&lock){try{lock.release()}catch(e){}}return}
+  if(ev.target.dataset.f==="cardiotype"&&active&&active.cardio){active.cardio.type=ev.target.value;settings.lastCardio=ev.target.value;saveSettings();saveActive();rerenderCardio();return}
   if(ev.target.dataset.f==="updplan")ui.updatePlan=ev.target.checked;if(ev.target.dataset.f==="swappersist")ui.swapPersist=ev.target.checked;});
 /* select the whole value on focus, so typing replaces it; the click that focused it would otherwise drop the selection */
 let freshFocus=null;
