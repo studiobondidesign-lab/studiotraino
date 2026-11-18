@@ -235,6 +235,9 @@ button.sync.login .person{display:block}
 .energy{background:var(--fill);border-radius:12px;padding:12px 14px;margin:0 0 14px}
 .energy .ek{font-size:13px;color:var(--muted)}
 .ev{font-family:var(--f-num);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.evrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.evavg{text-align:right}
+.evavg .ev{font-size:22px}
 .ev span{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
 .bodyin{display:inline-flex;align-items:baseline;gap:6px;margin-left:auto}
 .bodyin input{width:84px;height:36px;border:0;border-radius:10px;background:var(--fill);text-align:right;padding:0 10px;font:inherit;font-size:17px;font-variant-numeric:tabular-nums;outline:none}
@@ -472,7 +475,7 @@ let plans=LS.get("st_plans",{workouts:[],updatedAt:0});
 let sessions=LS.get("st_sessions",[]);
 let active=LS.get("st_active",null);
 let deleted=LS.get("st_deleted",[]);
-let settings=Object.assign({sound:true,vibrate:true,awake:true,stepDb:2,stepBar:2.5,theme:"auto",weight:0,height:0},LS.get("st_settings",{}));
+let settings=Object.assign({sound:true,vibrate:true,awake:true,stepDb:2,stepBar:2.5,theme:"auto",weight:0,height:0,age:0,sex:""},LS.get("st_settings",{}));
 function saveSettings(){LS.set("st_settings",settings);}
 function applyTheme(){const r=document.documentElement;if(settings.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",settings.theme);
   const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=settings.theme==="light"?"#f2f2f7":"#0b0b0d";}
@@ -566,10 +569,10 @@ const CARDIO=[["esteira","Esteira · caminhada",4.3],["inclinada","Esteira · ca
 const CARDIO_BY=Object.fromEntries(CARDIO.map(c=>[c[0],{label:c[1],met:c[2]}]));
 const LIFT_MET=4.5;
 function cardioMs(c){return c?(c.ms||0)+(c.since?Date.now()-c.since:0):0}
-function energy(totalMs,c,w){w=+w;if(!(w>0))return null;
+function energy(totalMs,c){const w=restHour();if(!(w>0))return null;
   const cm=cardioMs(c),tot=Math.max(totalMs,cm),lm=tot-cm,met=(c&&CARDIO_BY[c.type]||CARDIO_BY.outro).met;
   const lift=LIFT_MET*w*lm/3600000,car=cm>0?met*w*cm/3600000:0,all=lift+car;
-  return {lift:Math.round(lift),cardio:Math.round(car),total:Math.round(all),perMin:tot>0?Math.round(all/(tot/60000)*10)/10:0,w};}
+  return {lift:Math.round(lift),cardio:Math.round(car),total:Math.round(all),perMin:tot>0?Math.round(all/(tot/60000)*10)/10:0,w:+settings.weight};}
 function volume(s){let v=0,n=0;s.exercises.forEach(e=>e.sets.forEach(t=>{if(t.done){v+=t.w*t.r;n++}}));return {v,n};}
 const I={
   check:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
@@ -1082,7 +1085,7 @@ function exCard(e,i){
 }
 function cardioCard(){const c=active.cardio;
   if(!c)return `<div class="card cardio" id="cardio-card"><div class="ttl"><div class="spacer" style="min-width:0"><h2>Cardio</h2><p class="plan">Opcional. Conta no gasto de energia do treino.</p></div><button class="btn sm tinted" data-a="cardio-add">Adicionar</button></div></div>`;
-  const ms=cardioMs(c),run=!!c.since,w=+settings.weight,met=(CARDIO_BY[c.type]||CARDIO_BY.outro).met;
+  const ms=cardioMs(c),run=!!c.since,w=restHour(),met=(CARDIO_BY[c.type]||CARDIO_BY.outro).met;
   return `<div class="card cardio on ${run?"run":""}" id="cardio-card"><div class="ttl"><div class="spacer" style="min-width:0"><h2>Cardio</h2></div><button class="linkbtn press" data-a="cardio-del">Remover</button></div>
     <label class="cselect"><span class="vh">Tipo de cardio</span><select data-f="cardiotype" aria-label="Tipo de cardio">${CARDIO.map(x=>`<option value="${x[0]}" ${x[0]===c.type?"selected":""}>${esc(x[1])}</option>`).join("")}</select></label>
     <div class="ctime num" data-cardio aria-live="off">${mmss(ms/1000)}</div>
@@ -1127,7 +1130,9 @@ function vSettings(){
     <p class="setnote">Usado nos botões − e + e no "Subir para" da meta de hoje.</p>`;
   h+=`<div class="section">Seu corpo</div><div class="setgroup">
     <label class="setrow" for="st-weight"><span class="lbl">Peso</span><span class="bodyin"><input id="st-weight" data-f="body" data-k="weight" inputmode="decimal" value="${settings.weight?fmtKg(settings.weight):""}" placeholder="0" aria-label="Peso em quilos"><em>kg</em></span></label>
-    <label class="setrow" for="st-height"><span class="lbl">Altura</span><span class="bodyin"><input id="st-height" data-f="body" data-k="height" inputmode="numeric" value="${settings.height||""}" placeholder="0" aria-label="Altura em centímetros"><em>cm</em></span></label></div>
+    <label class="setrow" for="st-height"><span class="lbl">Altura</span><span class="bodyin"><input id="st-height" data-f="body" data-k="height" inputmode="numeric" value="${settings.height||""}" placeholder="0" aria-label="Altura em centímetros"><em>cm</em></span></label>
+    <label class="setrow" for="st-age"><span class="lbl">Idade</span><span class="bodyin"><input id="st-age" data-f="body" data-k="age" inputmode="numeric" value="${settings.age||""}" placeholder="0" aria-label="Idade em anos"><em>anos</em></span></label>
+    <div class="setrow"><span class="lbl">Sexo</span>${segBtns("sex",[["m","Masculino"],["f","Feminino"]])}</div></div>
     <p class="setnote" id="bodyNote">${bodyNote()}</p>`;
   h+=`<div class="section">Aparência</div><div class="setgroup"><div class="setrow"><span class="lbl">Tema</span>${segBtns("theme",[["auto","Auto"],["light","Claro"],["dark","Escuro"]])}</div></div>`;
   h+=`<div class="section">Dados</div><div class="setgroup"><button class="setrow act" data-a="export"><span class="lbl">Exportar meus treinos<small>${plans.workouts.length} treinos e ${sessions.length} sessões, em um arquivo</small></span>${chev}</button></div>`;
@@ -1135,10 +1140,14 @@ function vSettings(){
   view.innerHTML=h;
   if(ui.recovery)setTimeout(()=>{const p=document.getElementById("newPass");p&&p.focus()},300);
 }
+function restHour(){const w=+settings.weight;if(!(w>0))return 0;const h=+settings.height,a=+settings.age;
+  if(h>0&&a>0&&(settings.sex==="m"||settings.sex==="f"))return (10*w+6.25*h-5*a+(settings.sex==="m"?5:-161))/24; /* Mifflin-St Jeor, kcal per hour at rest */
+  return w;}
 function bodyNote(){const w=+settings.weight,hh=+settings.height;
-  if(!(w>0))return "O gasto de energia do treino é uma estimativa feita com o seu peso. Informe o peso para ver o gasto ao concluir o treino.";
+  if(!(w>0))return "O gasto de energia do treino é uma estimativa. Informe o peso para ver o gasto ao concluir o treino.";
+  const full=hh>0&&+settings.age>0&&(settings.sex==="m"||settings.sex==="f");
   const bmi=hh>0?` IMC ${(w/Math.pow(hh/100,2)).toLocaleString("pt-BR",{maximumFractionDigits:1})}.`:"";
-  return "O gasto é calculado com o seu peso (MET × peso × tempo). A altura só entra no IMC."+bmi+" Esses dados ficam só neste aparelho.";}
+  return (full?`Gasto calculado com peso, altura, idade e sexo: seu corpo em repouso gasta cerca de ${Math.round(restHour()*24).toLocaleString("pt-BR")} kcal por dia, e cada atividade multiplica isso pelo seu esforço (MET).`:"Com idade e sexo o cálculo fica mais preciso. Sem eles, o app usa só o peso.")+bmi+" Esses dados ficam só neste aparelho.";}
 function exportData(){
   const data={app:"StudioTraino",exportedAt:new Date().toISOString(),workouts:plans.workouts,sessions};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);
@@ -1166,9 +1175,9 @@ function vHistory(){
     const d=new Date(s.startedAt);const {v,n}=volume(s);
     const ups=s.exercises.map(e=>{const m=maxOf(e),p=m==null?null:prevMax(idx,e.name);return p!=null&&m>p?m-p:0});const nUp=ups.filter(x=>x>0).length;
     if(s.id===ui.justFinished){const upl=s.exercises.map((e,k)=>[e,ups[k]]).filter(([,u])=>u>0);
-      h=h.replace("<!--recap-->",`<div class="card recap" role="status"><div class="rk">${I.check}</div><h2>Treino salvo</h2><p class="sub num">${esc(s.name)} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries</p>${s.kcal?`<div class="ev num" style="margin-top:10px">${s.kcal.total.toLocaleString("pt-BR")} <span>kcal estimadas</span></div>`:""}${upl.length?`<ul class="changes">${upl.map(([e,u])=>`<li><span>${esc(e.name)}</span><span class="delta" style="margin:0">+${fmtKg(u)} kg</span></li>`).join("")}</ul>`:`<p class="rnote">${idx===sessions.length-1?"Primeiro treino registrado. Da próxima vez o app mostra estas cargas e sugere quando subir.":"Cargas mantidas. Da próxima vez o app mostra a meta de cada exercício."}</p>`}</div>`);}
+      h=h.replace("<!--recap-->",`<div class="card recap" role="status"><div class="rk">${I.check}</div><h2>Treino salvo</h2><p class="sub num">${esc(s.name)} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries</p>${s.kcal?`<div class="evrow" style="margin-top:10px"><div class="ev num">${s.kcal.total.toLocaleString("pt-BR")} <span>kcal no treino todo</span></div>${s.kcal.perMin?`<div class="evavg"><div class="ev num">${s.kcal.perMin.toLocaleString("pt-BR")} <span>kcal/min</span></div><div class="ek">média</div></div>`:""}</div>`:""}${upl.length?`<ul class="changes">${upl.map(([e,u])=>`<li><span>${esc(e.name)}</span><span class="delta" style="margin:0">+${fmtKg(u)} kg</span></li>`).join("")}</ul>`:`<p class="rnote">${idx===sessions.length-1?"Primeiro treino registrado. Da próxima vez o app mostra estas cargas e sugere quando subir.":"Cargas mantidas. Da próxima vez o app mostra a meta de cada exercício."}</p>`}</div>`);}
     h+=`<details class="card hist"><summary><div class="date"><div class="m">${MES[d.getMonth()]}</div><div class="d">${d.getDate()}</div></div><div class="info"><div class="t">${esc(s.name)}</div><div class="sub num">${DIA[d.getDay()]} · ${hms((s.endedAt||s.startedAt)-s.startedAt)} · ${n} séries · ${fmtKg(Math.round(v))} kg${s.kcal?` · ${s.kcal.total.toLocaleString("pt-BR")} kcal`:""}${nUp?` · <span class="delta" style="margin:0">${nUp===1?"1 carga subiu":nUp+" cargas subiram"}</span>`:""}</div></div><span class="chev">${I.chev}</span></summary>
-    <div class="body"><table>${s.exercises.map((e,k)=>[e,ups[k]]).filter(([e])=>e.sets.some(t=>t.done)).map(([e,up])=>`<tr><td>${esc(e.name)}${up>0?`<span class="delta">+${fmtKg(up)} kg</span>`:""}</td><td class="num">${fmtSets(e.sets.filter(t=>t.done))}</td></tr>`).join("")||(s.cardio?"":'<tr><td>Nenhuma série marcada</td><td></td></tr>')}${s.cardio?`<tr><td>Cardio · ${esc((CARDIO_BY[s.cardio.type]||CARDIO_BY.outro).label)}</td><td class="num">${Math.max(1,Math.round(s.cardio.sec/60))} min</td></tr>`:""}${s.kcal?`<tr><td>Gasto estimado<small class="tsub">musculação ${s.kcal.lift} · cardio ${s.kcal.cardio}</small></td><td class="num">${s.kcal.total.toLocaleString("pt-BR")} kcal</td></tr>`:""}</table>
+    <div class="body"><table>${s.exercises.map((e,k)=>[e,ups[k]]).filter(([e])=>e.sets.some(t=>t.done)).map(([e,up])=>`<tr><td>${esc(e.name)}${up>0?`<span class="delta">+${fmtKg(up)} kg</span>`:""}</td><td class="num">${fmtSets(e.sets.filter(t=>t.done))}</td></tr>`).join("")||(s.cardio?"":'<tr><td>Nenhuma série marcada</td><td></td></tr>')}${s.cardio?`<tr><td>Cardio · ${esc((CARDIO_BY[s.cardio.type]||CARDIO_BY.outro).label)}</td><td class="num">${Math.max(1,Math.round(s.cardio.sec/60))} min</td></tr>`:""}${s.kcal?`<tr><td>Gasto estimado<small class="tsub">musculação ${s.kcal.lift} · cardio ${s.kcal.cardio}</small></td><td class="num">${s.kcal.total.toLocaleString("pt-BR")} kcal</td></tr>${s.kcal.perMin?`<tr><td>Média do treino inteiro</td><td class="num">${s.kcal.perMin.toLocaleString("pt-BR")} kcal/min</td></tr>`:""}`:""}</table>
     <div style="margin-top:12px">${holdBtn("del-s",s.id,"Segure para apagar","block")}</div></div></details>`;
   });
   view.innerHTML=h+"</div>";
@@ -1187,10 +1196,10 @@ function planChanges(a,w){const out=[];
   a.exercises.forEach(e=>{const pe=w.exercises.find(x=>x.name.trim().toLowerCase()===e.name.trim().toLowerCase());
     const ds=e.sets.filter(s=>s.done);if(pe&&ds.length){const mx=Math.max(...ds.map(s=>s.w));if(mx!==+pe.weight)out.push({name:e.name,from:+pe.weight||0,to:mx});}});
   return out;}
-function energyBlock(a){const cm=cardioMs(a.cardio);const e=energy(Date.now()-a.startedAt,a.cardio,settings.weight);
+function energyBlock(a){const cm=cardioMs(a.cardio);const e=energy(Date.now()-a.startedAt,a.cardio);
   if(!e)return `<div class="energy"><div class="ek">Gasto de energia</div><p class="rnote" style="margin:4px 0 0">Informe seu peso para estimar quantas calorias você gastou, com a musculação e o cardio.</p><button class="btn sm tinted" style="margin-top:10px" data-a="finish-body">Informar peso</button></div>`;
-  return `<div class="energy"><div class="ek">Gasto de energia, estimado</div><div class="ev num">${e.total.toLocaleString("pt-BR")} <span>kcal</span></div>
-    <ul class="changes" style="margin:10px 0 0"><li><span>Musculação</span><span>${e.lift.toLocaleString("pt-BR")} kcal</span></li>${cm>=30000?`<li><span>${esc(CARDIO_BY[a.cardio.type].label)} · ${Math.max(1,Math.round(cm/60000))} min</span><span>${e.cardio.toLocaleString("pt-BR")} kcal</span></li>`:""}<li><span>Média do treino</span><span>${e.perMin.toLocaleString("pt-BR")} kcal/min</span></li></ul></div>`;}
+  return `<div class="energy"><div class="ek">Gasto de energia, estimado</div><div class="evrow"><div><div class="ev num">${e.total.toLocaleString("pt-BR")} <span>kcal no treino todo</span></div></div><div class="evavg"><div class="ev num">${e.perMin.toLocaleString("pt-BR")} <span>kcal/min</span></div><div class="ek">média do treino inteiro</div></div></div>
+    <ul class="changes" style="margin:10px 0 0"><li><span>Musculação</span><span>${e.lift.toLocaleString("pt-BR")} kcal</span></li>${cm>=30000?`<li><span>${esc(CARDIO_BY[a.cardio.type].label)} · ${Math.max(1,Math.round(cm/60000))} min</span><span>${e.cardio.toLocaleString("pt-BR")} kcal</span></li>`:""}</ul></div>`;}
 function openFinish(){
   const a=active;const {done,total}=progressOf();const {v}=volume(a);
   const plan=plans.workouts.find(w=>w.id===a.workoutId);const changes=plan?planChanges(a,plan):[];
@@ -1271,11 +1280,11 @@ function startWorkout(wid){
 function finishWorkout(){
   const a=active;a.endedAt=Date.now();
   if(a.cardio&&a.cardio.since){a.cardio.ms+=a.endedAt-a.cardio.since;a.cardio.since=null;}
-  const cm=cardioMs(a.cardio);const en=energy(a.endedAt-a.startedAt,a.cardio,settings.weight);
+  const cm=cardioMs(a.cardio);const en=energy(a.endedAt-a.startedAt,a.cardio);
   const rec={id:a.id,workoutId:a.workoutId,name:a.name,startedAt:a.startedAt,endedAt:a.endedAt,
     exercises:a.exercises.map(e=>({name:e.name,sets:e.sets.map(s=>({w:s.w,r:s.r,done:s.done}))}))};
   if(cm>=30000)rec.cardio={type:a.cardio.type,sec:Math.round(cm/1000)};
-  if(en)rec.kcal={lift:en.lift,cardio:cm>=30000?en.cardio:0,total:en.total,w:en.w};
+  if(en)rec.kcal={lift:en.lift,cardio:cm>=30000?en.cardio:0,total:en.total,perMin:en.perMin,w:en.w};
   sessions.unshift(rec);saveSessions();pushSession(rec);
   const w=plans.workouts.find(x=>x.id===a.workoutId);
   if(w&&ui.updatePlan){let changed=false;
@@ -1311,7 +1320,7 @@ async function keepAwake(){try{if(settings.awake&&active&&navigator.wakeLock&&do
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){keepAwake();renderRest()}});
 setInterval(()=>{if(!active)return;const t=hms(Date.now()-active.startedAt);document.querySelectorAll("[data-clock]").forEach(el=>el.textContent=t);
   if(active.cardio){const ms=cardioMs(active.cardio);document.querySelectorAll("[data-cardio]").forEach(el=>el.textContent=mmss(ms/1000));
-    const w=+settings.weight;document.querySelectorAll("[data-ckcal]").forEach(el=>{if(w>0)el.textContent="≈ "+Math.round((CARDIO_BY[active.cardio.type]||CARDIO_BY.outro).met*w*ms/3600000)+" kcal até agora"});}
+    const w=restHour();document.querySelectorAll("[data-ckcal]").forEach(el=>{if(w>0)el.textContent="≈ "+Math.round((CARDIO_BY[active.cardio.type]||CARDIO_BY.outro).met*w*ms/3600000)+" kcal até agora"});}
   renderRest();},500);
 
 /* ---------- drag to dismiss (rest pill + sheet) ---------- */
@@ -1430,7 +1439,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&ui.sheet)closeSheet
   if((e.key==="Enter"||e.key===" ")&&e.target.matches('.live[role="button"]')){e.preventDefault();e.target.click();}});
 document.addEventListener("input",ev=>{
   const t=ev.target,f=t.dataset.f;if(!f)return;const i=+t.dataset.i,j=+t.dataset.j;
-  if(f==="body"){const v=parseNum(t.value);settings[t.dataset.k]=t.dataset.k==="weight"?Math.min(400,Math.max(0,v)):Math.min(260,Math.max(0,Math.round(v)));saveSettings();const bn=document.getElementById("bodyNote");if(bn)bn.textContent=bodyNote();}
+  if(f==="body"){const v=parseNum(t.value),k=t.dataset.k;settings[k]=k==="weight"?Math.min(400,Math.max(0,v)):k==="age"?Math.min(110,Math.max(0,Math.round(v))):Math.min(260,Math.max(0,Math.round(v)));saveSettings();const bn=document.getElementById("bodyNote");if(bn)bn.textContent=bodyNote();}
   else if(f==="wname"){ui.draft.name=t.value;saveDraft();}
   else if(["name","sets","reps","weight","rest","notes"].includes(f)){ui.draft.exercises[i][f]=t.value;saveDraft();
     if(f==="name"){const tile=document.getElementById("eil-"+ui.draft.exercises[i].id);if(tile)tile.innerHTML=figFor(t.value,false);}}
@@ -1500,7 +1509,7 @@ document.addEventListener("click",ev=>{
   switch(b.dataset.a){
     case "account": openAccount();break;
     case "settings": if(ui.view==="settings"){window.scrollTo({top:0,behavior:"smooth"});break}ui.prev=ui.view;ui.view="settings";render();scrollTop();break;
-    case "set-opt":{const k=b.dataset.k;let v=b.dataset.v;if(k!=="theme")v=parseFloat(v);settings[k]=v;saveSettings();if(k==="theme")applyTheme();
+    case "set-opt":{const k=b.dataset.k;let v=b.dataset.v;if(k!=="theme"&&k!=="sex")v=parseFloat(v);settings[k]=v;saveSettings();if(k==="theme")applyTheme();if(k==="sex"){const bn=document.getElementById("bodyNote");if(bn)bn.textContent=bodyNote();}
       b.parentNode.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));break;}
     case "pw-save": savePassword();break;
     case "export": exportData();break;

@@ -42,7 +42,7 @@ Um app pessoal, feito para duas pessoas e alguns amigos, em vez de um app de aca
 - Hospedado como site estático no Cloudflare Pages (studiotraino.pages.dev), sem etapa de build.
 - Interface toda em português do Brasil.
 - **Progressão (pronta):** dupla progressão. Se todas as séries chegaram ao topo da faixa de repetições, o app sugere "Subir para X kg"; se não, "Buscar N reps com X kg". Os dois são botões que aplicam a meta nas séries ainda não feitas. O passo de carga vem dos Ajustes (halteres e barra/máquina).
-- **Cardio e gasto de energia (pronto):** cardio opcional dentro do treino, com tipo (esteira, bike, elíptico etc.) e cronômetro. O gasto é estimado por MET × peso × tempo (musculação 4,5 MET no tempo que não é cardio). O peso e a altura ficam nos Ajustes, só no aparelho; a altura só entra no IMC. O histórico guarda cardio e kcal de cada treino.
+- **Cardio e gasto de energia (pronto):** cardio opcional dentro do treino, com tipo (esteira, bike, elíptico etc.) e cronômetro. O gasto é estimado por MET × gasto em repouso × tempo (Mifflin-St Jeor com peso, altura, idade e sexo; sem idade e sexo usa só o peso). Musculação conta 4,5 MET no tempo que não é cardio. Esses dados ficam nos Ajustes, só no aparelho. O app mostra o total do treino inteiro e a média em kcal por minuto. O histórico guarda cardio e kcal de cada treino.
 - **Equipamentos:** a academia do Dan tem muito Panatta no lugar de Hammer; a biblioteca tem as duas versões das máquinas articuladas/convergentes e a busca "panatta" acha as duas.
 - **Em aberto:** um jeito de o Dan montar o treino da Lívia sem precisar entrar na conta dela.
 
